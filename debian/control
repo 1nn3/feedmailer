@@ -1,0 +1,46 @@
+Source: feedmailer
+Section: net
+Priority: optional
+Maintainer: nobody <nobody>
+Build-Depends: debhelper (>= 9.0.0), dh-apparmor, libfile-sharedir-install-perl
+Standards-Version: 4.1.4
+
+Package: feedmailer
+Architecture: all
+Depends: libarray-utils-perl,
+         libconfig-any-perl,
+         libconfig-tiny-perl,
+         libdatetime-perl,
+         libemail-address-perl,
+         libemail-date-format-perl,
+         libfile-homedir-perl,
+         libfile-sharedir-perl,
+         libhtml-strip-perl,
+         libhtml-stripscripts-perl,
+         libjson-perl,
+         liblingua-identify-perl,
+         liblocale-codes-perl,
+         liblwp-protocol-socks-perl,
+         libmime-charset-perl,
+         libmime-lite-html-perl,
+         libmime-lite-perl,
+         libpath-tiny-perl,
+         libproc-pid-file-perl,
+         libtemplate-perl,
+         libtemplate-plugin-html-strip-perl,
+         libtext-trim-perl,
+         liburi-perl,
+         libwww-perl,
+         libxml-feed-perl,
+         ${misc:Depends},
+         ${perl:Depends},
+         ${shlibs:Depends}
+Recommends: default-mta | mail-transport-agent,
+            mail-reader | icedove | thunderbird,
+            moreutils
+Description: Feed-Aggregator (RSS/Atom to email gateway)
+ Feedmailer is a feed aggregator that queries RSS/Atom feed and delivers new
+ articles by email. Using the Sendmail-Commandline-Interface and optional a
+ Cronjob.
+ .
+ No need for a feedreader; use your email client!

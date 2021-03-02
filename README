@@ -1,0 +1,67 @@
+Feedmailer - A Feed-Aggregator (RSS/Atom to email gateway)
+
+Feed aggregator that queries RSS/Atom feeds and delivers new articles by
+email.  Using the Sendmail-Commandline-Interface and optional a Cronjob.
+
+No need for a feedreader; use your email client!
+
+But a 2nd main-feature is the option to run hooks.  With Feedmailer you
+can execute any command as a hook for an article.
+
+REQUIREMENTS
+
+The Perl programming language and some CPAN modules see Makefile.PL and
+if a modul is not packaged in Debian see below.
+
+INSTALLATION
+
+To install Feedmailer in your home directory run:
+
+	perl Makefile.PL PREFIX=$HOME/.local
+	make
+	make test
+	make install
+
+How to install a CPAN Perl module as a Debian package:
+
+The following builds a package for a Perl CPAN module (Make sure
+you have the pkg-perl-tools package installed):
+
+	env DEB_BUILD_OPTIONS="nocheck" cpan2deb <MODUL>
+
+Or use the CPAN shell to install modules into youre home directory:
+
+	perl -MCPAN -e shell
+	cpan> notest install <MODUL…>
+
+After installation add the following cronjob:
+
+	@daily feedmailer-cronjob
+
+Commands
+
+	feedmailer (1p)       - sends RSS/ATOM feeds as mail or runs hooks
+	feedmailer-clean (1p) - cleans the cache.json file
+	genfeed (1p)          - Generiert einen neuen Feed
+	listentries (1p)      - lists entries of a newsfeed
+	listfeeds (1p)        - lists feeds of a website
+	lsbookmarks (1p)      - list Firefox bookmarks
+	mergefeeds (1p)       - Erzeut aus mehreren Newsfeed einen neuen
+	newspaper (1p)        - print a statistic of feeds
+	send-uri (1p)         - send URI as e-mail
+
+Skripting
+
+	Set hook
+	hook = perl -E 'print "%l\n";'
+
+	Run Feedmailer
+	$(which feedmailer-cronjob) -c ~/.config/Perl/Feedmailer/subdir/
+
+This should work with the default Feedmailer AppArmor profile.
+
+LICENSE AND COPYRIGHT
+
+Feedmailer is free software. See COPYING and
+http://www.gnu.org/licenses/gpl.html for more information.
+

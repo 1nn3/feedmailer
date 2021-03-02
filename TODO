@@ -1,0 +1,4 @@
+Use $feed->splice($other_feed) in mergefeed(1p)?
+
+newspaper loads the feed twice (in listfeeds -d and mergefeeds) fix that!
+
