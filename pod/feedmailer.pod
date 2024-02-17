@@ -1,0 +1,252 @@
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+feedmailer - sends RSS/ATOM feeds as mail or runs hooks
+
+=head1 SYNOPSIS
+
+B<feedmailer> [-t to] [-S alt. sendmail command]
+
+B<feedmailer> -X <URI of feed> | -u <URI of feed>
+
+=head1 OPTIONS
+
+=head2 General options
+
+=over
+
+=item --version
+
+=item --help
+
+=item -q
+
+Quiet: Inhibit the usual output.
+
+=item -v
+
+Verbose: Print more information about progress.
+
+=item -c <path/to/directory>
+
+Configuration directory.
+
+=item -x <unsigned integer>
+
+Limit for the flood detection.
+
+If a feed has more then the given amount of new articels. Don't send mails (nor
+execute hooks) and report this.
+
+This option does not act on new added feeds.
+
+=item -X <URI of feed>
+
+Run hooks (or send mails) just for the given URI. Note: The option I<-x> will be
+disabled.
+
+You can use this option when option I<-x> has attacked and you will run hooks
+(or send mails) for the feed anyway.
+
+=item -u <URI of feed>
+
+Update the cache for the given URI but don't send mails (nor execute hooks).
+Note: The option I<-x> will be disabled.
+
+You can use this option to update the cache e.g. when option I<-x> has attacked.
+
+=item -U
+
+Update the cache like option I<-u>, but for all configurated URIs.
+
+=item -F
+
+Always update the cache, also on failure.
+
+=item -n Don't send mail for older articles of new added feeds.
+
+Creates the cache for new added feeds but don't send mails (nor execute hooks).
+
+=item -1 <string>
+
+Act only once at double articels. Useful for Planets etc.
+
+The detection algorithm is based on the string set as argument with
+text-substitution.
+
+As example use the weblink I<-1"%l">, the headline I<-1"%e"> (more general)
+or the host and basename of path from the weblink I<-1"%H-%B"> for detection.
+
+=back
+
+=head2 URI/Feed and HTTP options
+
+No options available yet.
+
+=over
+
+=back
+
+=head2 Mail options
+
+=over
+
+=item -t <to>
+
+To: Recipients.
+
+The default for I<-t> is in that order: Environment variables I<EMAIL> or as fallback I<USER>.
+
+=item -f <from>
+
+From: Envelope Sender.
+
+The default for I<-f> is same as for the option I<-t>.
+
+=item -S <alt. sendmail command>
+
+Sendmail: Alt. sendmail command. E.g:
+
+	ssh [user@]hostname -c sendmail
+
+See also: L<sendmail(8)>
+
+=back
+
+=head2 Hook options
+
+No options available yet.
+
+=over
+
+=back
+
+=head1 FILES
+
+=over
+
+=item config.ini, config.d/*.ini
+
+A INI style configuration file. The subscription list.
+
+The feed URIs and some options how to handel the feeds - see the example.
+
+Example:
+
+	download=0                 # string (set to "attachment", "inline" or "" for disable downloading)
+	filter_date=7              # integer (time difference in days. Entries older are ignored)
+	filter_lang=".*"           # regex (entries with not matching languages are ignored - Example: "en|de")
+	filter_list=1              # boolean (if true filtering against black- and whitlist is enabled)
+	filter_size=0              # integer (size in bytes. Entries larger are ignored)
+	force_secure_scheme=0      # boolean (use always the secure scheme e.g. HTTPS instead of HTTP)
+	from=""                    # string (email address)
+	hook=""                    # string (command to execute)
+	keep_old=N                 # integer (keep always min. N IDs in cache - This should help to better recognize already read articles)
+	max_threads=8              # integer
+	cut_to=96                  # integer (value for the cutted values e.g. %E, %F, ... in text-substitutions)
+	subject="%E (%f)"          # string
+	template="mail.tt.html"    # string (rel. filename)
+	to=""                      # string (email address)
+	ua_proxy_uri=undef         # URI/string
+	ua_timeout=180             # integer (ms)
+	ua_local_address=undef     # string (Local host bind address e.g. "hostname[:port]")
+	x_mailer="App::Feedmailer" # string (value for the X-Mailer mail header field)
+	force_mail=0               # force send mail instead of run hook
+	force_hook=0               # force run hook instead of send mail
+	
+	[http://www.example.org/feed.xml]
+		# Using global configuration values - see above - and some overrides
+		hook = ""      # string (command to execute)
+		to = ""        # string (email address)
+		# don't identify
+		ua_from = ""   # string
+		ua_string = "" # string
+
+Each value can also set globally by an enviromenet variable in upper-case like:
+
+	env APP_FEEDMAILER_<KEY>="<value>" feedmailer
+
+Example howto load a feed from I2P Eepsite:
+
+	[http://example.i2p/feed.xml]
+		# e.g. for I2P HTTP proxy
+		ua_proxy_uri = http://localhost:4444
+
+Example howto load a feed from TOR hidden service:
+
+	[http://example.onion/feed.xml]
+		# e.g. for Tor SOCKS proxy
+		ua_proxy_uri = socks4://localhost:9050
+
+Text-substitution:
+
+The keys I<subject> and I<hook> are support text-substition as follow.
+
+	%a Author
+        %B Basename of path from weblink of the article
+	%c Article content data
+	%C Copyright
+	%d Date
+	%D Feed description
+	%e Headline of the article
+	%E Headline of the article, cutted to cut_to chars
+	%f Feed title
+	%F Feed title, cutted to cut_to chars
+	%H Host of the weblink from article
+	%L Feed link
+	%l Weblink to the article
+	%m From: Envelope sender
+	%P Path (without query) of the weblink from article
+	%p Proxy URI
+	%s Article summary data
+	%% The %-sign
+	%t To: Recipients
+
+Template-processing:
+
+In templates the following replacements are avalible.
+
+	author
+	copyright
+	date
+	entry_content_body
+	entry_content_type
+	entry_link
+	entry_title, entry_title_cut
+	feed_description
+	feed_link
+	feed_title, feed_title_cut
+
+=item whitelist.text
+
+A plain-text file of Perl regex-pattern (line-wise; case-insensitive).
+
+Whitelist: If an entry title don't matched these patterns Feedmailer will ignore the entry.
+
+	echo <WEBSITE_TITEL> | grep --color -i -E -f whitelist.text
+
+=item blacklist.text
+
+A plain-text file of Perl regex-pattern (line-wise; case-insensitive).
+
+Blacklist: If an entry title matched these patterns Feedmailer will ignore the entry.
+
+=item cache.json
+
+A JSON file stored the already known articles (as a cache).
+
+=item .no-feedmailer
+
+When this file exists in the current working directory feedmailer will not run.
+
+=back
+
+=head1 SEE ALSO
+
+L<feedmailer-clean(1p)>, L<listfeeds(1p)>
+
+=cut
+

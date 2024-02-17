@@ -1,0 +1,4 @@
+NOTES
+
+wget -O - http://ftp.debian.org/debian/dists/stable/main/{binary-all,binary-amd64,binary-i386}/Packages.gz | zcat | awk '$1=="Homepage:"{print $2}' | sort -u
+

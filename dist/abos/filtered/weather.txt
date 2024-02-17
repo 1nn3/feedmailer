@@ -1,0 +1,12 @@
+# WETTER
+
+# Deutscher Wetterdienst
+https://www.wettergefahren.de
+https://www.dwd.de
+
+# Kachelmann GmbH
+https://kachelmannwetter.com
+
+# www.wetter.de
+https://www.wetter.de
+
