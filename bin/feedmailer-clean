@@ -1,0 +1,81 @@
+#!/usr/bin/perl
+# Feedmailer
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>
+#
+# See http://github.com/user/feedmailer
+
+use App::Feedmailer;
+
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+
+sub VERSION_MESSAGE {
+    my ($fh) = @_;
+    say $fh "feedmailer-clean (%s)", $App::Feedmailer::PACKAGE_STRING;
+}
+
+sub HELP_MESSAGE {
+    my ($fh) = @_;
+    say $fh "No help message avalibale yet.";
+}
+
+# Global variables
+our %opts;     # command-line options
+our $cache;    # already known articles
+our $cfg;      # configuration
+
+getopts( "c:", \%opts )
+    || die "Error on processing of command-line-options";
+
+#$opts{c} //= $App::Feedmailer::CONFIG_DIR;
+
+if ( $opts{c} ) {
+    if ( Cwd::chdir $opts{c} ) {
+        die $opts{c}, ": ", $!;
+    }
+}
+
+my $dir = ".";
+if ( Proc::PID::File->running( dir => $dir ) ) {
+    die "W: ${App::Feedmailer::NAME} is already running!\n";
+}
+
+my @config_files;
+push @config_files, $App::Feedmailer::CONFIGFILE;
+push @config_files,
+    App::Feedmailer::list_config_d($App::Feedmailer::CONFIG_D);
+
+my @keys;
+for my $config_file (@config_files) {
+    $App::Feedmailer::cfg = App::Feedmailer::load_config($config_file);
+    push @keys, keys %{$App::Feedmailer::cfg};
+}
+
+$cache = App::Feedmailer::load_cache();
+for my $key ( keys %{$cache} ) {
+
+    my $is_in_cfg = 0;
+
+    for (@keys) {
+        if ( $_ eq $key ) {
+            $is_in_cfg = 1;
+            last;
+        }
+    }
+
+    delete( $cache->{$key} ) if ( !$is_in_cfg );
+}
+
+App::Feedmailer::save_cache($cache);
+

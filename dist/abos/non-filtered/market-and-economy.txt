@@ -1,0 +1,116 @@
+# GELD, MARKT UND WIRTSCHAFT
+
+# BANKEN
+
+# Bundesbank
+https://www.bundesbank.de
+https://www.bundesbank.de/service/rss/en/633292/feed.rss
+https://www.bundesbank.de/service/rss/en/633306/feed.rss
+https://www.bundesbank.de/service/rss/en/878806/feed.rss
+https://www.bundesbank.de/service/rss/en/633296/feed.rss
+https://www.bundesbank.de/service/rss/en/633312/feed.rss
+# FED
+https://www.federalreserve.gov
+https://www.federalreserve.gov/feeds/press_all.xml
+https://www.federalreserve.gov/feeds/speeches_and_testimony.xml
+https://www.federalreserve.gov/feeds/working_papers.xml
+https://www.federalreserve.gov/feeds/datadownload.xml
+# ECB
+https://www.ecb.europa.eu
+https://www.ecb.europa.eu/rss/press.html
+https://www.ecb.europa.eu/rss/blog.html
+https://www.ecb.europa.eu/rss/statpress.html
+https://www.ecb.europa.eu/rss/pub.html
+https://www.ecb.europa.eu/rss/wppub.html
+https://www.ecb.europa.eu/rss/operations.html
+https://www.ecb.europa.eu/rss/procurements.html
+https://www.ecb.europa.eu/rss/yc.html
+https://www.ecb.europa.eu/rss/rbu.html
+https://www.ecb.europa.eu/rss/tipsmeetdocs.rss
+https://www.ecb.europa.eu/rss/fxref-usd.html
+
+# BÖRSE
+
+# Dow Jones
+https://www.dowjones.com
+https://www.dowjones.com/feed
+https://www.dowjones.com/comments/feed
+https://www.dowjones.com/home/feed
+https://www.wsj.com
+
+# NASDAQ
+# Nasdaq's original content
+https://www.nasdaq.com/feed/nasdaq-original/rss.xml
+# Nasdaq's others from https://www.nasdaq.com/nasdaq-RSS-Feeds
+#https://www.nasdaq.com/feed/rssoutbound?category=Commodities
+#https://www.nasdaq.com/feed/rssoutbound?category=Cryptocurrecies
+#https://www.nasdaq.com/feed/rssoutbound?category=Dividends
+#https://www.nasdaq.com/feed/rssoutbound?category=Earnings
+#https://www.nasdaq.com/feed/rssoutbound?category=ETFs
+#https://www.nasdaq.com/feed/rssoutbound?category=IPOs
+#https://www.nasdaq.com/feed/rssoutbound?category=Markets
+#https://www.nasdaq.com/feed/rssoutbound?category=Options
+#https://www.nasdaq.com/feed/rssoutbound?category=Stocks
+#https://www.nasdaq.com/feed/rssoutbound?category=Artificial+Intelligence
+#https://www.nasdaq.com/feed/rssoutbound?category=Blockchain
+#https://www.nasdaq.com/feed/rssoutbound?category=Corporate+Governance
+#https://www.nasdaq.com/feed/rssoutbound?category=Financial+Advisors
+#https://www.nasdaq.com/feed/rssoutbound?category=FinTech
+#https://www.nasdaq.com/feed/rssoutbound?category=Innovation
+#https://www.nasdaq.com/feed/rssoutbound?category=Nasdaq
+#https://www.nasdaq.com/feed/rssoutbound?category=Technology
+#https://www.nasdaq.com/feed/rssoutbound?category=Investing
+#https://www.nasdaq.com/feed/rssoutbound?category=Retirement
+#https://www.nasdaq.com/feed/rssoutbound?category=Saving%20Money
+
+# DAX
+https://deutsche-boerse.com
+https://deutsche-boerse.com/dbg-de/1546098!rss
+https://deutsche-boerse.com/dbg-de/2582!rss
+
+# Frankfurter Wertpapierbörse (FWB)
+https://www.boerse-frankfurt.de
+https://api.boerse-frankfurt.de/v1/feeds/news.rss
+https://jumkqv.podcaster.de/boerse-frankfurt.rss
+http://api-gateway/v1/feeds/news.rss
+https://euroclear.com
+https://clearstream.com
+https://www.clearstream.com/service/rss/clearstream-en/1277648/feed.rss
+https://deutscheboersephotographyfoundation.org
+https://xetra.com
+https://deutsche-boerse-cash-market.com
+# Bayerische Börse AG / Börse München
+https://boerse-muenchen.de
+https://courage-akademie.de
+https://finment.com
+https://gettex.de
+# Börse Berlin AG
+https://boerse-berlin.de
+https://www.boerse-berlin-4u.de
+# BÖAG Börsen AG / Börse Düsseldorf
+https://boersenag.de
+https://boerse-duesseldorf.de
+https://primaermarkt.de
+https://quotrix.de
+# Hamburger Börse
+https://hamburger-boerse.de
+# Börse Stuttgart
+https://boerse-stuttgart.de
+https://anlegerclub.de
+# Tradegate Exchange GmbH
+https://tradegate.de
+# Alte Handelsbörse (Leipzig)
+https://eex.com
+# Schifferbörse Duisburg-Ruhrort
+https://schifferboerse.org
+# European Exchange (Eurex)
+https://eurex.com
+# Rheinische Warenbörse
+https://rheinische-warenboerse.de
+
+# WIRTSCHAFT
+
+# Internationale Währungsfonds (IWF; engl. International Monetary Fund, IMF; auch bekannt als Weltwährungsfonds)
+https://www.imf.org
+https://www.imf.org/en/Blogs
+

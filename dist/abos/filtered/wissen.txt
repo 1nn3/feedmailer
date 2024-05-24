@@ -1,0 +1,25 @@
+# WISSEN
+
+# Standard Verlagsgesellschaft m. b. H.
+https://derstandard.at/?page=rss&ressort=Wissenschaft
+
+# FOCUS Magazin Verlag GmbH, München, ein Unternehmen der Hubert Burda Media
+https://rss.focus.de/wissen/
+
+# SPIEGEL-Verlag Rudolf Augstein GmbH & Co. KG
+https://www.spiegel.de/wissenschaft/index.rss
+
+# Bild der Wissenschaft
+https://damals.de/
+https://www.wissenschaft.de
+https://www.spektrum.de
+https://www.scinexx.de
+https://scienceblogs.de
+https://wissen.de
+https://natur.de
+
+# Welt
+https://www.welt.de/feeds/section/wissenschaft.rss
+
+# Tagesschau
+https://www.tagesschau.de/wissen
