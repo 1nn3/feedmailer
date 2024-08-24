@@ -1,0 +1,12 @@
+# BITCOIN
+
+https://bitcoin.org/en/rss/blog.xml
+
+https://bitcoincore.org/en/announcements.xml
+https://bitcoincore.org/en/feed.xml
+https://bitcoincore.org/en/releasesrss.xml
+
+https://de.wikipedia.org/w/index.php?title=Bitcoin&feed=atom&action=history
+
+https://bitcoinblog.de/feed
+

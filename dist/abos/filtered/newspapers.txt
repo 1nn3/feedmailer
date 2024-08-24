@@ -1,0 +1,31 @@
+#
+# ZEITUNGEN
+#
+
+
+
+# Guardian
+https://www.theguardian.com/international/rss
+https://www.couragefound.org/feed
+# Spiegel
+https://www.spiegel.de/
+# Stern
+https://www.stern.de/
+# Focus
+https://www.focus.de
+
+
+
+#
+# ÜBERREGIONALE BÖRSENPFLICHTBLÄTTER
+#
+
+
+
+https://www.boersen-zeitung.de
+https://www.faz.net
+https://www.fr.de
+https://www.handelsblatt.com
+https://www.sueddeutsche.de
+https://www.welt.de
+

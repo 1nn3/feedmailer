@@ -1,0 +1,68 @@
+#
+# ÖRR/Rundfunkanstalten
+#
+
+
+#
+# ÜBERREGIONAL/ÖR Hauptprogramme
+#
+
+
+
+# Deutschlandfunk
+https://www.deutschlandfunk.de
+https://www.deutschlandfunknova.de
+https://www.deutschlandfunkkultur.de
+# ARD
+https://www.ard.de
+https://www.daserste.de
+https://www.tagesschau.de
+# ZDF
+https://www.zdf.de
+
+
+
+#
+# ÖR Gemeinschaftsprogramme
+#
+
+
+
+https://www.3sat.de
+https://www.arte.tv
+https://www.kika.de
+https://www.ardmediathek.de
+# Degeto Film GmbH
+https://www.degeto.de
+
+
+
+#
+# REGIONAL
+#
+
+
+
+# Bayerischer Rundfunk
+https://www.br.de
+# Hessischer Rundfunk
+https://www.hessenschau.de
+# Mitteldeutscher Rundfunk
+https://www.mdr.de
+https://www.mdrjump.de
+https://www.sputnik.de
+# Norddeutscher Rundfunk
+https://www.ndr.de
+https://www.n-joy.de
+# Radio Bremen
+https://www.butenunbinnen.de
+# Rundfunk Berlin-Brandenburg
+https://www.rbb24.de
+Saarländischer Rundfunk
+https://www.sr.de
+# Südwestrundfunk
+https://www.swr.de
+https://www.swr3.de
+# Westdeutscher Rundfunk
+https://www1.wdr.de
+https://www.wdrmaus.de
