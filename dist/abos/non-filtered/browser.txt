@@ -1,0 +1,11 @@
+# INTERNET BROWSER UND MAIL CLIENTS
+
+# Chrome
+# Siehe OPERATING SYSTEMS Google/Android usw.
+# Mozilla Firefox, Thunderbird
+https://www.mozilla.org
+# Thunderbird
+https://www.thunderbird.net
+# Edge
+# Siehe OPERATING SYSTEMS Microsoft/Windows usw.socks pass { from: 0/0 to: .services.mozilla.com }-
+

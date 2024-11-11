@@ -1,0 +1,45 @@
+#
+# Auslandssender
+#
+
+
+
+#
+# Europa
+#
+
+# England (BBC)
+https://www.bbc.com
+https://www.bbcearth.com
+
+# Deutschland Deutsche Welle
+https://www.dw.com
+
+# Euronews
+https://www.euronews.de
+https://www.euronews.com
+
+#
+# China
+#
+
+https://www.cgtn.com/
+
+#
+# Russland
+#
+
+# RT (Russia Today)
+https://www.rt.com
+
+#
+# USA
+#
+
+# Voice of America VoA
+https://www.voanews.com/
+
+# The Associated Press (AP) and AP News
+https://www.ap.org
+https://apnews.com
+

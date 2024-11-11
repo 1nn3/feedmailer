@@ -1,0 +1,28 @@
+# POLIZEI
+
+# Bundespolizei
+https://www.gdp.de
+https://www.bundespolizei.de
+
+https://www.presseportal.de/rss/presseportal.rss2?langid=1
+https://www.presseportal.de/rss/dienststelle_116095.rss2?langid=1
+https://www.presseportal.de/rss/polizei.rss2?langid=1
+
+# Polizei
+https://polizei.brandenburg.de
+https://www.thueringen.de/th3/polizei
+https://www.schleswig-holstein.de/DE/Landesregierung/POLIZEI/Polizei_node.html
+https://polizei-web.sachsen-anhalt.de
+https://www.polizei.sachsen.de/de/index.htm
+https://www.saarland.de/polizei.htm
+https://www.polizei.rlp.de/de/startseite
+https://polizei.nrw
+https://www.polizei-nds.de/startseite
+https://www.polizei.mvnet.de
+https://www.polizei.hessen.de/Startseite
+https://www.polizei.hamburg
+https://www.polizei.bremen.de
+https://www.berlin.de/polizei
+https://www.polizei.bayern.de
+https://www.polizei-bw.de
+
