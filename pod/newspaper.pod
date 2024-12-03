@@ -1,0 +1,85 @@
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+newspaper - bereite zur Zeitung auf
+
+=head1 SYNOPSIS
+
+B<newspaper> <options> -- <URI…>
+
+=head1 DESCRIPTION
+
+Prints entries of feeds in headlines based on a RE list.
+
+=head1 OPTIONS
+
+=over
+
+=item --version
+
+=item --help
+
+=item -C
+
+Do not use the canonical link in output.
+	
+=item -x <template>
+
+Template file.
+
+=item -a
+
+News in jede passende Headline einsortieren, nicht nur auf die erste.
+
+=item -w path/to/whitelist.text
+
+Whitelist filter aka. headlines. Linewise RE.
+
+=item -b path/to/blacklist.text
+
+Blacklist filter. Linewise RE.
+
+=item -F
+
+Ignore filter. See I<-w> and I<-f> options.
+
+=item -z
+
+Print also emtpy headlines, such with zero matches.
+
+=item -N
+
+Do not print headlines at all.
+
+=item -i FILE
+
+URIs werden zeilenweise aus I<FILE> gelesen.
+
+Not implemented yet.
+
+=back
+
+=head1 FILES
+
+=over
+
+=item whitelist.text, blacklist.text
+
+The Headlines.
+
+Filter: Datei mit Regulären Ausdrücken, auf die ein Artikel passen muss.
+
+When I<-F> is given then the RE I<.*> is assumed.
+
+=back
+
+=head1 SEE ALSO
+
+L<newspaper-cronjob>, L<feedmailer-cronjob>
+
+=cut
+

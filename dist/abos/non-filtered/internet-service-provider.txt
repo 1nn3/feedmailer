@@ -1,0 +1,31 @@
+# INTERNET SERVICE PROVIDER (ISP)
+
+# Telekom Deutschland GmbH
+https://www.telekom.de
+https://www.t-online.de
+https://www.telekom-dienste.de
+
+# United Internet AG
+https://www.1und1.de  # 1&1 Versatel GmbH
+https://www.ionos.de
+https://www.web.de    # 1&1 Mail & Media GmbH
+https://www.gmx.com   # GMX
+https://www.gmx.net
+https://www.strato.de # Strato AG
+
+# O2
+https://www.o2online.de
+
+# Lebara Limited
+https://www.lebara.com
+https://www.lebara.de
+
+# Telefónica Germany GmbH & Co. OHG
+https://www.telefonica.com
+https://www.telefonica.de # Telefónica Deutschland Holding
+https://www.netzclub.net  # Netzklub
+https://www.blau.de       # Blau Mobilfunk
+
+# Vodafone
+https://www.vodafone.de
+

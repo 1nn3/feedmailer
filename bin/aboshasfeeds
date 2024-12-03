@@ -1,0 +1,24 @@
+#!/usr/bin/env -S flock -n ${HOME}/.aboshasfeeds.lock sh
+# check if a abo has feeds or not
+
+#set -x
+set -e
+
+export LANG="C"
+export PATH
+
+trap 'rm -f -- "${HOME}/.aboshasfeeds.lock"' 0 1 2 3 15
+
+# working directory
+wd="$(perl -e 'use App::Feedmailer; print App::Feedmailer::get_file(".", @App::Feedmailer::dirs);')"
+cd "$wd" || exit
+
+_aboshasfeeds () {
+	sed "s/[#;].*//; /^\s*$/d" | sort -u \
+		| xargs -P 8 -I {} sh -c "listfeeds -s {} || echo {}"
+}
+
+for i in abos/*; do
+	cat $i/*.txt | _aboshasfeeds || continue
+done
+
