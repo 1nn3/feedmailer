@@ -1,0 +1,26 @@
+#!/usr/bin/env -S flock -n ${HOME}/.newspaper-cronjob.lock chronic sh
+# Schicke Reporter los die Nachrichten holen und breite zur Zeitung auf
+# @daily newspaper-cronjob
+
+#set -x
+set -e
+
+export LANG="C.UTF-8"
+export PATH
+
+trap 'rm -f -- "${HOME}/.newspaper-cronjob.lock"' 0 1 2 3 15
+
+# working directory
+wd="$(perl -e 'use App::Feedmailer; print App::Feedmailer::get_file(".", @App::Feedmailer::dirs);')"
+cd "$wd" || exit
+
+#cat <<! | ifne mail -s "Newspaper" ${USER:-$LOGNAME}
+#Newspaper
+#$(date +"Die Nachrichten für %A den %d. %B %Y!")
+#
+#$(APP_FEEDMAILER_HOOK="/usr/bin/perl -E 'print (\"%l\\n\")'" feedmailer-cronjob "$@" | unsortuniq | newspaper -s -F)
+#!
+APP_FEEDMAILER_HOOK="/usr/bin/perl -E 'print (\"%l\\n\")'" feedmailer-cronjob "$@" | unsortuniq | newspaper -s -F | ifne mail -s "Newspaper" ${USER:-$LOGNAME}
+
+exit 0
+
