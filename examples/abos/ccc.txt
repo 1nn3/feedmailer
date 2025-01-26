@@ -1,0 +1,10 @@
+# CCC
+
+https://www.ccc.de
+https://www.ccc.de/de/rss/updates.xml
+https://chaosradio.de
+https://chaosradio.de/feed/mp3
+https://chaosradio.de/comments/feed
+http://alternativlos.org
+http://alternativlos.org/alternativlos.rss
+

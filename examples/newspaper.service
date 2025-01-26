@@ -1,0 +1,9 @@
+[Unit]
+Description=Feedmailer
+
+[Service]
+ExecStart=/usr/bin/newspaper-cronjob
+
+[Install]
+WantedBy=basic.target
+

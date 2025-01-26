@@ -1,0 +1,82 @@
+# SOFTWARE AND PROGRAMMING
+
+# GNU/FSF
+https://planet.gnu.org/rss20.xml
+https://static.fsf.org/fsforg/rss/news.xml
+https://static.fsf.org/fsforg/rss/events.xml
+https://static.fsf.org/fsforg/rss/blogs.xml
+https://static.fsf.org/fsforg/rss/jobs.xml
+#https://www.gnu.org/rss/whatsnew.rss
+#https://www.gnu.org/rss/quagga.rss
+
+# Linux
+https://www.kernel.org/feeds/all.atom.xml
+https://planet.kernel.org/rss20.xml
+
+# Oracle Corporation
+#https://blogs.oracle.com/rss
+#https://blogs.oracle.com/academy/rss
+#https://blogs.oracle.com/ai-and-datascience/rss
+#https://blogs.oracle.com/analytics/rss
+#https://blogs.oracle.com/cloud-infrastructure/rss
+#https://blogs.oracle.com/construction-engineering/rss
+#https://blogs.oracle.com/cx/rss
+#https://blogs.oracle.com/database/rss
+#https://blogs.oracle.com/diversity-inclusion/rss
+#https://blogs.oracle.com/financialservices/rss
+#https://blogs.oracle.com/javamagazine/rss
+#https://blogs.oracle.com/jobsatoracle/rss
+#https://blogs.oracle.com/life-sciences/rss
+#https://blogs.oracle.com/marketingcloud/rss
+#https://blogs.oracle.com/modernfinance/rss
+#https://blogs.oracle.com/oraclehcm/rss
+#https://blogs.oracle.com/oracleuniversity/rss
+#https://blogs.oracle.com/retail/rss
+#https://blogs.oracle.com/scm/rss
+#https://blogs.oracle.com/socialimpact/rss
+#https://blogs.oracle.com/sustainability/rss
+https://blogs.oracle.com/virtualization/rss # VirtualBox
+
+# Gnome
+https://www.gnome.org/feed/
+https://planet.gnome.org/atom.xml
+
+# Nmap (seclists.org)
+https://seclists.org/rss/nmap-dev.rss
+https://seclists.org/rss/nmap-announce.rss
+https://seclists.org/rss/fulldisclosure.rss
+https://seclists.org/rss/bugtraq.rss
+https://seclists.org/rss/basics.rss
+#https://seclists.org/rss/pen-test.rss
+#https://seclists.org/rss/isn.rss
+#https://seclists.org/rss/firewall-wizards.rss
+#https://seclists.org/rss/focus-ids.rss
+#https://seclists.org/rss/webappsec.rss
+#https://seclists.org/rss/dailydave.rss
+#https://seclists.org/rss/pauldotcom.rss
+https://seclists.org/rss/honeypots.rss
+https://seclists.org/rss/microsoft.rss
+https://seclists.org/rss/funsec.rss
+#https://seclists.org/rss/cert.rss
+https://seclists.org/rss/oss-sec.rss
+#https://seclists.org/rss/securecoding.rss
+#https://seclists.org/rss/educause.rss
+#https://seclists.org/rss/nanog.rss
+https://seclists.org/rss/interesting-people.rss
+#https://seclists.org/rss/risks.rss
+#https://seclists.org/rss/dataloss.rss
+https://seclists.org/rss/metasploit.rss
+https://seclists.org/rss/wireshark.rss
+#https://seclists.org/rss/snort.rss
+
+# Lua
+http://lua-users.org/wiki/.rss
+
+# Perl
+https://blogs.perl.org/atom.xml
+https://blogs.perl.org/comments.xml
+https://www.perl.com/article/index.xml
+https://metacpan.org/news.rss
+https://perl.theplanetarium.org/atom.xml
+
+
