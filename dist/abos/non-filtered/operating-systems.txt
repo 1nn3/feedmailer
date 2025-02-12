@@ -1,0 +1,57 @@
+# OPERATING SYSTEMS (OS)
+
+# Debian GNU/Linux
+https://www.debian.org
+https://wiki.debian.org
+https://www.debian.org/News/news
+https://www.debian.org/News/weekly/dwn
+
+# Offensive Security/Kali Linux
+https://www.offsec.com
+https://www.offsec.com/feed
+https://www.kali.org
+https://www.kali.org/rss.xml
+
+# Microsoft/Windows usw.
+https://www.microsoft.com
+https://news.microsoft.com/de-de/category/press-releases/feed/
+#https://blogs.windows.com/feed
+https://blogs.windows.com/windowsdeveloper/feed
+https://blogs.windows.com/devices/feed
+https://blogs.windows.com/windowsexperience/feed
+https://blogs.windows.com/windows-insider/feed
+https://www.bing.com
+https://www.skype.com
+https://www.github.blog # https://www.github.com
+https://www.linkedin.com
+
+# Alphabet
+https://www.abc.xyz # Alphabet 
+https://www.google.com # Google
+https://www.google.de
+https://www.googleblog.com
+https://www.blog.google
+https://www.blogger.com # Blogger.com
+https://www.android.com # Android
+https://www.youtube.com # Youtube
+
+# Apple
+https://www.apple.com
+
+# Ubuntu/Canonical
+https://www.canonical.com
+https://www.ubuntu.com
+https://wiki.ubuntu.com
+https://www.launchpad.net
+https://www.snapcraft.io
+
+# SUSE
+https://www.suse.com
+https://www.opensuse.org
+
+# IBM/REDHAT
+https://www.ibm.com
+https://www.redhat.com
+https://www.getfedora.org
+https://www.fedoraproject.org
+
