@@ -1,0 +1,40 @@
+# INTERNATIONAL
+
+https://www.interpol.int
+
+# Auswärtiges Amt
+https://www.auswaertiges-amt.de
+https://www.auswaertiges-amt.de/static/appdata/includes/rss/Presse-RSS-Feed.xml
+https://www.auswaertiges-amt.de/static/appdata/includes/rss/Aktuelles-RSS-Feed.xml
+https://www.auswaertiges-amt.de/static/appdata/includes/rss/Reisehinweise-RSS-Feed.xml
+
+# CHINA
+https://www.gov.cn
+https://www.gov.cn/english
+
+# EU
+https://www.europa.eu
+https://www.europol.europa.eu
+https://www.ecb.europa.eu
+# Europäische Parteien
+https://pes.eu
+https://www.epp.eu
+https://europeangreens.eu
+https://www.aldeparty.eu
+https://id-party.eu
+https://www.european-left.org
+https://www.e-f-a.org
+https://www.democrats.eu
+https://www.ecpm.info
+https://european-pirateparty.eu
+https://www.volteuropa.org
+
+# RUSSLAND
+http://government.ru
+http://government.ru/en
+
+# USA
+https://www.whitehouse.gov
+https://www.fbi.gov
+https://www.federalreserve.gov
+

@@ -1,0 +1,43 @@
+# vim:syntax=apparmor
+#include <tunables/global>
+#include <tunables/sys>
+
+profile /usr/bin/{feedmailer,feedmailer-clean,genfeed,listfeeds,mergefeeds,newspaper,send-uri} {
+	#include <abstractions/base>
+	#include <abstractions/nameservice>
+	#include <abstractions/perl>
+	#include <abstractions/bash>
+	#include <abstractions/private-files>
+	#include <abstractions/user-tmp>
+	#include <abstractions/openssl>
+
+	# feedmailer
+	/usr/bin/feedmailer ixr,
+	/usr/bin/feedmailer-clean ixr,
+	/usr/bin/feedmailer-cronjob r,
+	/usr/bin/genfeed r,
+	/usr/bin/listfeeds r,
+	/usr/bin/mergefeeds r,
+	/usr/bin/newspaper r,
+	/usr/bin/send-uri r,
+	/usr/share/App-Feedmailer/{,**} rl,
+
+	# pre-user
+	owner /var/lib/feedmailer/{,**} rwkl,
+	owner @{HOME}/.App-Feedmailer/{,**} rwkl,
+	owner @{HOME}/.config/Perl/App-Feedmailer/{,**} rwkl,
+	owner @{HOME}/.local/share/Perl/dist/App-Feedmailer/{,**} rwkl,
+	owner @{HOME}/.perl/App-Feedmailer/{,**} rwkl,
+
+	# allow 3d-party programs
+	/usr/lib/sendmail rl,
+	/usr/sbin/sendmail Ux,
+	/usr/sbin/exim rl,
+	/usr/sbin/exim4 Ux,
+	/usr/bin/msmtp Ux,
+	/usr/sbin/postfix Ux,
+
+	# Site-specific additions and overrides. See local/README for details.
+	#include <local/feedmailer>
+}
+

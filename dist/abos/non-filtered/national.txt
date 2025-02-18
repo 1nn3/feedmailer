@@ -1,0 +1,86 @@
+# NATIONAL
+
+https://www.bundestag.de
+https://www.generalbundesanwalt.de
+https://www.bundesgerichtshof.de
+https://www.bka.de
+https://www.verfassungsschutz.de
+
+# Bundesregierung kompakt
+# Zusammenstellung von Pressemitteilungen, Artikeln, Reden, Interviews und Regierungserklärunge
+#https://www.bundesregierung.de/service/rss/breg-de/1151242/feed.xml
+# Pressemitteilungen 
+https://www.bundesregierung.de/service/rss/breg-de/1151244/feed.xml
+# Artikel 
+https://www.bundesregierung.de/service/rss/breg-de/1151246/feed.xml
+
+# bpb
+https://www.bpb.de/die-bpb/ueber-uns/service/rss/
+# Neue Publikationen der bpb
+https://www.bpb.de/rss-feed/62409.rss
+# Aktuelle Veranstaltungen der bpb
+https://www.bpb.de/rss-feed/133222.rss
+# Neue Online Angebote der bpb
+https://www.bpb.de/rss-feed/133223.rss
+# Aktuelle Pressemitteilungen der bpb
+https://www.bpb.de/rss-feed/203612.rss
+# Reden von bpb-Präsident Thomas Krüger
+https://www.bpb.de/rss-feed/203613.rss
+# Aus Politik und Zeitgeschichte
+https://www.bpb.de/rss-feed/230868.rss
+# Hintergrund aktuell
+https://www.bpb.de/rss-feed/230153.rss
+# werkstatt.bpb.de – Bildung im digitalen Wandel
+https://www.bpb.de/rss-feed/207248.rss
+# Migrationspolitik - der Monatsrückblick
+https://www.bpb.de/rss-feed/325589.rss
+
+# Bundesländer
+https://www.thueringen.de
+https://www.schleswig-holstein.de
+https://www.sachsen-anhalt.de
+https://www.sachsen.de
+https://www.saarland.de
+https://www.rlp.de
+https://www.land.nrw
+https://www.niedersachsen.de
+https://www.mecklenburg-vorpommern.de
+https://www.hessen.de
+https://www.hamburg.de
+https://landesportal.bremen.de
+https://www.brandenburg.de
+https://www.berlin.de
+https://www.bayern.de
+https://www.baden-wuerttemberg.de
+
+# Der Generalbundesanwalt beim Bundesgerichtshof (GBA)
+https://www.generalbundesanwalt.de
+
+# Parteien
+# https://de.wikipedia.org/wiki/Liste_der_politischen_Parteien_in_Deutschland#Parteien_und_W%C3%A4hlervereinigungen_in_Parlamenten
+
+# Bundersregierung
+http://afd.de
+http://cdu.de
+http://csu.de
+http://fdp.de
+http://gruene.de
+http://spd.de
+
+# Parlament
+https://www.die-linke.de
+https://www.ssw.de
+https://www.freiewaehler.eu
+https://www.lkr.de
+https://www.xn--whlefamilie-l8a.de
+https://www.oedp.de
+https://www.die-partei.de
+https://www.piratenpartei.de
+https://www.voltdeutschland.org
+https://www.zentrumspartei.de
+https://www.bvb-fw.de
+https://www.buerger-fuer-thueringen.de
+https://buerger-in-wut.de
+
+# sonstige Partien mit Wahlbeteiligung
+
