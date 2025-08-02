@@ -41,6 +41,10 @@ After installation add the following cronjob:
 
 	@daily feedmailer-cronjob
 
+or
+	@monthly abos2config
+	@daily newspaper-cronjob
+
 Commands
 
 	feedmailer (1p)         - sends RSS/ATOM feeds as mail or runs hooks
