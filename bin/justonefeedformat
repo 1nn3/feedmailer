@@ -1,0 +1,33 @@
+#!/usr/bin/env -S awk -f
+# listfeeds -d https://example.net | justonefeedformat
+
+$2~/Atom/ {
+	atomlen++
+	atom[$1] = $1
+}
+
+$2~/RSS/ {
+	rsslen++
+	rss[$1] = $1
+}
+
+{
+	otherlen++
+	other[$1] = $1 
+}
+
+function print_array(a) {
+	for (i in a)
+		print a[i];
+}
+
+END {
+	if (atomlen) {
+		print_array(atom);
+	} else if (rsslen) {
+		print_array(rss);
+	} else {
+		print_array(other);
+	}
+}
+

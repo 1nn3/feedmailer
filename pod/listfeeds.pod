@@ -1,0 +1,63 @@
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+listfeeds - lists feeds of a website
+
+=head1 SYNOPSIS
+
+B<listfeeds> [OPTION] <URI…>
+
+B<listfeeds> <URI…> | B<listentries>
+
+B<listfeeds> <URI…> | B<mergefeeds>
+
+=head1 DESCRIPTION
+
+Lists feeds of an URI.
+
+=head1 OPTIONS
+
+=over
+
+=item --version
+
+=item --help
+
+=item -d
+
+Gibt auch Details zum Feed aus, wie z.B. das Fromat.
+
+=item -s
+
+Force secure scheme.
+
+=item -i FILE
+
+URIs werden zeilenweise aus I<FILE> gelesen.
+
+Not implemented yet.
+
+=back
+
+=head1 EXAMPLES
+
+=over
+
+=item Format bestimmten
+
+Um nur ein spezielles Format zu bekommen, kann folgender Filter hier Atom vor RSS ausgeben:
+
+	B<listfeeds> -d <URI…> | justonefeedformat | listentries
+
+=back
+
+=head1 SEE ALSO
+
+L<listentries(1p)>, L<mergefeeds(1p)>
+
+=cut
+

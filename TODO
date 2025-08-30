@@ -1,0 +1,2 @@
+Use $feed->splice($other_feed) in mergefeed(1p)?
+Use Feed::Find->find($uri) in listfeeds(1p)

@@ -1,0 +1,688 @@
+#!/usr/bin/env perl
+# Feedmailer
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this progEntriesram. If not, see <http://www.gnu.org/licenses/>
+#
+# See http://github.com/user/feedmailer
+
+#use v5.12;
+use feature 'unicode_strings';
+use feature 'say';
+
+use App::Feedmailer;
+
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+
+# some global variables -- but not the bad one ;-)
+our %opts;    # command-line options
+our @doubles : shared;
+
+#use locale;
+use utf8;
+binmode( STDIN,  ":encoding(UTF-8)" );
+binmode( STDOUT, ":encoding(UTF-8)" );
+binmode( STDERR, ":encoding(UTF-8)" );
+
+package feed {
+
+    use v5.12;
+
+    use Data::Dumper;
+    use Encode qw(decode encode);
+    use File::Basename;
+    use List::Util qw(first);
+    use URI;
+    use Cwd;
+
+    #    use locale;
+    use utf8;
+    binmode( STDIN,  ":encoding(UTF-8)" );
+    binmode( STDOUT, ":encoding(UTF-8)" );
+    binmode( STDERR, ":encoding(UTF-8)" );
+
+    fileparse_set_fstype("VMS");    # Unix
+
+    use DateTime;
+    use Email::Address;
+    use Email::Date::Format qw(email_date);
+    use Lingua::Identify    qw(:language_identification);
+    use Array::Utils        qw(:all);
+    use HTML::Strip;
+    use MIME::Base64;
+    use MIME::Types;
+
+    use App::Feedmailer;
+
+    my $cut_to;
+    my $download;
+    my $feed;    # XML::Feed object
+    my $filter_date;
+    my $filter_lang;
+    my $filter_list;
+    my $filter_size;
+    my $force_secure_scheme;
+    my $from;
+    my $hook;
+    my $keep_old;
+    my $key;     # scalar containing the key/id for the class-object
+    my $subject;
+    my $template;
+    my $to;
+    my $uri;     # URI object
+    my $use_cookie;
+    my $ua_proxy;
+    my $ua_timeout;
+    my $ua_local_address;
+    my $force_mail;
+    my $force_hook;
+
+    my @old_cache;
+    my @new_cache;
+
+    sub new ($$) {
+        my ( $_class, $_key, $_uri, $_cache_ref ) = @_;
+
+        my $self = { key => $_key, uri => $_uri };
+        bless $self, $_class;
+
+        $cut_to              = $self->_get_cfg_val("cut_to");
+        $download            = $self->_get_cfg_val("download");
+        $filter_date         = $self->_get_cfg_val("filter_date");
+        $filter_lang         = $self->_get_cfg_val("filter_lang");
+        $filter_list         = $self->_get_cfg_val("filter_list");
+        $filter_size         = $self->_get_cfg_val("filter_size");
+        $force_secure_scheme = $self->_get_cfg_val("force_secure_scheme");
+        $from                = $self->_get_cfg_val("from");
+        $hook                = $self->_get_cfg_val("hook");
+        $keep_old            = $self->_get_cfg_val("keep_old");
+        $subject             = $self->_get_cfg_val("subject");
+        $template            = $self->_get_cfg_val("template");
+        $to                  = $self->_get_cfg_val("to");
+        $use_cookie          = $self->_get_cfg_val("use_cookie");
+        $ua_proxy            = $self->_get_cfg_val("ua_proxy_uri");
+        $ua_timeout          = $self->_get_cfg_val("ua_timeout");
+        $ua_local_address    = $self->_get_cfg_val("ua_local_address");
+        $force_mail          = $self->_get_cfg_val("force_mail");
+        $force_hook          = $self->_get_cfg_val("force_hook");
+
+        @old_cache = @{$_cache_ref};
+        @new_cache = ();
+
+        $uri = URI->new($_uri);
+
+        $feed = App::Feedmailer::get_feed(
+            $uri,
+            {   ua                  => $App::Feedmailer::ua,
+                proxy               => $ua_proxy,
+                force_secure_scheme => $force_secure_scheme,
+                timeout             => $ua_timeout,
+            }
+        );
+
+        return $self;
+    }
+
+    sub _get_cfg_val ($$) {
+        my ( $self, $val, $default ) = @_;
+        return $App::Feedmailer::cfg->{ $self->{"key"} }{$val}
+            || App::Feedmailer::get_cfg_val( $val, $default );
+    }
+
+    sub _get_entry_id ($$) {
+        my ( $self, $entry ) = @_;
+        return
+               URI->new( $entry->link )->as_string
+            || $entry->id
+            || $entry->title;
+    }
+
+    sub _get_entry_lang ($$) {
+        my ( $self, $entry ) = @_;
+        return langof(
+            HTML::Strip->new->parse(
+                $entry->content->body || $entry->title || ""
+            )
+        );
+    }
+
+    sub _get_entry_size ($$) {
+        my ( $self, $entry ) = @_;
+        use bytes;
+        return length( $entry->content->body );
+    }
+
+    # returns the absolut URI of an entry
+    sub _get_entry_uri ($$) {
+        my ( $self, $entry ) = @_;
+        return App::Feedmailer::get_abs_uri( $feed->link, $entry->link );
+    }
+
+    sub _get_all_ids ($$) {
+        my ($self) = @_;
+        my @all_ids = ();
+        for ( $feed->entries ) {
+            push @all_ids, $self->_get_entry_id($_);
+        }
+        return @all_ids;
+    }
+
+    sub _cut_string ($$) {
+        my ( $self, $str, $len ) = @_;
+        if ( $len && length($str) > $len ) {
+            $str = sprintf "%s…", substr( $str, 0, $len );
+        }
+        return $str;
+    }
+
+    sub _get_new_entrys ($$) {
+        my ($self) = @_;
+        my @new_entrys = ();
+        for my $entry ( $feed->entries ) {
+            my $id = $self->_get_entry_id($entry);
+
+            next if ( grep { $_ eq $id; } @old_cache );
+
+            eval {
+                my %a;
+
+                $a{author}
+                    = App::Feedmailer::get_entry_author( $entry, $feed );
+                $a{date} = App::Feedmailer::get_entry_date( $entry, $feed );
+                $a{delta_days}
+                    = DateTime->now->delta_days( $a{date} )->delta_days;
+                $a{email_date} = email_date( $a{date}->epoch );
+                $a{entry}      = $entry;
+                $a{id}         = $id;
+                $a{lang}       = $self->_get_entry_lang($entry);
+                $a{size}       = $self->_get_entry_size($entry);
+                $a{uri}        = $self->_get_entry_uri($entry);
+
+                # text substitution
+                $a{replace} = {
+                    '%' => '%',
+                    'a' => App::Feedmailer::clean_up( $a{author} ),
+                    'B' => basename( $a{uri}->path ),
+                    'c' => $a{entry}->content->body,
+                    'C' => App::Feedmailer::clean_up( $feed->copyright ),
+                    'd' => $a{email_date},
+                    'D' => App::Feedmailer::clean_up( $feed->description ),
+                    'e' => App::Feedmailer::clean_up( $a{entry}->title ),
+                    'E' => $self->_cut_string(
+                        App::Feedmailer::clean_up( $a{entry}->title ),
+                        $cut_to
+                    ),
+                    'f' => App::Feedmailer::clean_up( $feed->title ),
+                    'F' => $self->_cut_string(
+                        App::Feedmailer::clean_up( $feed->title ), $cut_to
+                    ),
+
+                    'H' => $a{uri}->host,
+                    'l' => $a{uri}->as_string,
+                    'L' => $feed->link,
+                    'm' => $from,
+
+                    'P' => $a{uri}->path,
+                    'p' => $self->_get_cfg_val("ua_proxy_uri"),
+                    's' => HTML::Strip->new()
+                        ->parse( $a{entry}->summary->body || "" ),
+                    't' => $to,
+                };
+
+                $a{tt_vars} = {
+                    "entry_title" =>
+                        App::Feedmailer::clean_up( $a{entry}->title ),
+                    "entry_title_cut" => $self->_cut_string(
+                        App::Feedmailer::clean_up( $a{entry}->title ),
+                        $cut_to
+                    ),
+                    "entry_title_wrap" => Text::Wrap::wrap(
+                        "", "", App::Feedmailer::clean_up( $a{entry}->title )
+                    ),
+                    "entry_link"         => $a{uri}->as_string,
+                    "entry_content_body" => $a{entry}->content->body,
+                    "entry_content_type" => $a{entry}->content->type,
+                    "feed_title" => App::Feedmailer::clean_up( $feed->title ),
+                    "feed_title_cut" => $self->_cut_string(
+                        App::Feedmailer::clean_up( $feed->title ), $cut_to
+                    ),
+                    "feed_link"        => $feed->link,
+                    "feed_description" =>
+                        App::Feedmailer::clean_up( $feed->description ),
+                    "copyright" =>
+                        App::Feedmailer::clean_up( $feed->copyright ),
+                    "date"   => $a{email_date},
+                    "author" => App::Feedmailer::clean_up( $a{author} ),
+
+                    "text"     => $a{text},
+                    "charset"  => $a{charset},
+                    "encoding" => $a{encoding},
+
+                };
+
+                push @new_entrys, \%a;
+            };
+            $@ && warn "$@";
+        }
+
+        return @new_entrys;
+    }
+
+    sub dance ($$) {
+        my ($self) = @_;
+
+        $feed || return;
+
+        my @new_entrys = $self->_get_new_entrys();
+
+        # implementation of the option -x
+        if ( defined( $opts{'x'} ) && scalar(@old_cache) > 0 ) {
+            my $count_of_new_entrys = scalar(@new_entrys);
+            if ( $count_of_new_entrys > $opts{'x'} ) {
+                warn
+                    "$uri: The flood-detection attacks ($count_of_new_entrys new)";
+                @new_cache
+                    = ( $opts{F} ) ? $self->_get_all_ids() : @old_cache;
+                return ( \@new_cache );
+            }
+        }
+
+        # update cache and dance for all entrys
+        for (@new_entrys) {
+
+            # implementation of the option -u and -U
+            # don't act; just update the cache
+            next if ( $opts{'U'} || $opts{'u'} );
+
+        # implementation of the option -n
+        # don't act older articles from new added feeds; only create the cache
+            next if ( scalar(@old_cache) == 0 && $opts{'n'} );
+
+            # don't act out-filtert articles
+            next if ( $self->ig_entry($_) );
+
+            # implementation of the option -1
+            # don't act already known uris
+            my $doubles_replace;
+            if ( $opts{'1'} ) {
+                ( $doubles_replace = $opts{'1'} )
+                    =~ s/\%(\%|\w+)/$_->{replace}{$1}/ge;
+                next if ( grep { $_ eq $doubles_replace; } @doubles );
+            }
+
+            # run hook/send mail
+            my $success;
+            if ( $force_mail || !$hook ) {
+                $success = $self->send_mail($_);
+            }
+            else {
+                $success = $self->run_hook($_);
+            }
+
+            # when failed remove entry from cache and retry next time
+            if ($success) {
+                push @new_cache, $_->{id};
+                push( @doubles, $doubles_replace ) if ( $opts{'1'} );
+            }
+        }
+
+        @new_cache
+            = ( $opts{F} )
+            ? $self->_get_all_ids()
+            : unique( @new_cache, $self->_get_all_ids() );
+
+      # FIXME: Ugly Work-A-Round
+      # Füge noch $keep_old IDs aus @old_cache zu @new_cache hinzu
+      # Dies soll helfen, bereits gelesene Artikel besser zu erkennen
+      # use List::Slice qw( head tail ); # not packaged in Debian
+      # push @new_cache, head($keep_old, array_minus(@old_cache, @new_cache));
+        push @new_cache, map { $_ // () }    # nur nicht-undef
+            ( array_minus( @old_cache, @new_cache ) )[ 0 .. $keep_old ];
+
+        return ( \@new_cache );
+    }
+
+    sub ig_entry ($$) {
+        my ( $self, $a ) = @_;
+
+        if ($filter_date) {
+            return 1 if ( $a->{delta_days} > $filter_date );
+        }
+
+        if ($filter_size) {
+            return 1 if ( $a->{size} > $filter_size );
+        }
+
+        if ($filter_lang) {
+            return 1 if ( $a->{lang} !~ m/$filter_lang/i );
+        }
+
+        if ($filter_list) {
+            my ( $ig, $re, $list )
+                = App::Feedmailer::ig( $a->{entry}->title );
+            return $ig;
+        }
+
+        return 0;
+    }
+
+    #** @method private run_hook ()
+    # @brief Run hook-script
+    #
+    # TODO: Write a detailed description of the function.
+    # @retval 0 on failure or 1 on success (opposite of exit code)
+    #*
+    sub run_hook ($$) {
+        my ( $self, $a ) = @_;
+        ( my $cmd = $hook ) =~ s/\%(\%|\w+)/$a->{replace}{$1}/ge;
+        system($cmd);
+        $a->{hook_return_value} = $?;
+        if ( $a->{hook_return_value} == 0 ) {
+            return 1;
+        }
+        else {
+            warn "Hook \"$cmd\" failed: ", $a->{hook_return_value};
+            return 0;
+        }
+    }
+
+    sub send_mail ($$) {
+
+        # create mail
+        my ( $self, $a ) = @_;
+
+        # define mail-subject
+        ( my $s = $subject ) =~ s/\%(\%|\w+)/$a->{replace}{$1}/ge;
+        $s = Encode::encode( "MIME-B", $s );
+
+        # define mail body
+        my $mail = MIME::Lite->new(
+            "From"     => $from,
+            "To"       => $to,
+            "Subject"  => $s,
+            "Type"     => "multipart/mixed",
+            "Date"     => $a->{email_date},
+            "Reply-To" => $a->{author},
+        );
+
+        my $part;
+        my $type;
+        my $data;
+
+        # template processing...
+
+        my $tt_data;
+        my $tt_vars = $a->{tt_vars};
+        $App::Feedmailer::tt->process( $template, $tt_vars, \$tt_data )
+            || warn $App::Feedmailer::tt->error;
+        $data = $tt_data;
+        $type = "text/html; charset=utf-8";
+        if ( $type && $data ) {
+            $part = MIME::Lite->new(
+                "Type"        => $type,
+                "Data"        => App::Feedmailer::to_utf8($data),
+                "Encoding"    => "base64",
+                "Disposition" => "inline",
+            );
+            $mail->attach($part);
+        }
+
+        # attach entry
+
+        $data = $a->{entry}->content->body;
+        $type = $a->{entry}->content->type;
+        if ( $type && $data ) {
+            $part = MIME::Lite->new(
+                "Type"        => $type,
+                "Data"        => App::Feedmailer::to_utf8($data),
+                "Encoding"    => "base64",
+                "Disposition" => "inline",
+            );
+            $mail->attach($part);
+
+        }
+
+        # attach website
+
+        if (   $download eq "inline"
+            || $download eq "attachment" )
+        {
+            if ( $a->{uri} ) {
+
+                # download the entry link (as attachment)
+                my $http_response = App::Feedmailer::download(
+                    $a->{uri},
+                    {   ua                  => $App::Feedmailer::ua,
+                        proxy               => $ua_proxy,
+                        ua_timeout          => $ua_timeout,
+                        force_secure_scheme => $force_secure_scheme,
+                        ua_local_address    => $ua_local_address,
+                    }
+                );
+
+                if ( $http_response->is_success ) {
+                    $type = $http_response->header("Content-Type");
+                    $data = $http_response->decoded_content;
+                }
+                else {
+                    $type = "text/html; charset=utf-8";
+                    $data = $http_response->error_as_HTML;
+                }
+
+                if ( $type && $data ) {
+                    my $part = MIME::Lite->new(
+                        "Type"        => $type,
+                        "Data"        => App::Feedmailer::to_utf8($data),
+                        "Encoding"    => "base64",
+                        "Disposition" => $download,
+                    );
+                    $mail->attach($part);
+                }
+            }
+        }
+
+        $mail->replace( "X-Mailer", $self->_get_cfg_val("x_mailer") );
+        $mail->send() || warn "send mail failed: $@, $!";
+
+        $a->{send_mail_successful} = $mail->last_send_successful();
+        return $mail->last_send_successful();
+    }
+
+    1;
+};
+
+package main {
+
+    sub VERSION_MESSAGE {
+        my ($fh) = @_;
+        say $fh "feedmailer (${App::Feedmailer::PACKAGE_STRING})";
+    }
+
+    sub HELP_MESSAGE {
+        my ($fh) = @_;
+        say $fh "No help message available yet.";
+    }
+
+    sub BEGIN {
+        if ( -e ".no-feedmailer" ) {
+            warn "File .no-feedmailer found in current working directory";
+            exit;
+        }
+    }
+
+    sub END {
+    }
+
+    sub thread_handler_start ($) {
+        my ($key) = @_;
+        my %new_cache;
+        if ( !$App::Feedmailer::cfg->{$key} ) {
+            warn "$key: Not contained in configuration";
+        }
+        else {
+            #for my $uri (
+            #    App::Feedmailer::find_feeds(
+            #        $key, App::Feedmailer::get_cfg_val("force_secure_scheme")
+            #    )
+            #  )
+            #{
+            #    my $feed = feed->new( $key, $uri,
+            #        \@{ $App::Feedmailer::cache->{$uri} } );
+            #    $new_cache{$uri} = $feed->dance;
+            #}
+            my $uri  = $key;
+            my $feed = feed->new( $key, $uri,
+                \@{ $App::Feedmailer::cache->{$uri} } );
+            $new_cache{$uri} = $feed->dance;
+        }
+        return %new_cache;
+    }
+
+    sub thread_handler_stop {
+        my (%new_cache) = @_;
+        for my $key ( keys %new_cache ) {
+
+            if ( defined( $new_cache{$key} ) ) {
+                @{ $App::Feedmailer::cache->{$key} } = @{ $new_cache{$key} };
+                App::Feedmailer::save_cache($App::Feedmailer::cache);
+            }
+        }
+    }
+
+    # read the command-line-options
+    getopts( "c:t:f:sS:x:X:Uu:nvq1:FNw:b:", \%opts )
+        || die "Error on processing of command-line-options";
+    $opts{1} //= "%l";
+
+    #$opts{c} //= $App::Feedmailer::CONFIG_DIR);
+
+    if ( $opts{'c'} ) {
+        if ( !Cwd::chdir $opts{'c'} ) {
+            die $opts{c}, ": ", $!;
+        }
+    }
+
+    # LOCK!
+    #my $dir = App::Feedmailer::get_file( ".", @App::Feedmailer::dirs );
+    my $dir = ".";
+    if ( Proc::PID::File->running( dir => $dir ) ) {
+        die "${App::Feedmailer::NAME} is already running!\n";
+    }
+
+    # check -x has a numeric value
+    if ( $opts{'x'}
+        && !App::Feedmailer::looks_like_number( $opts{'x'} ) )
+    {
+        die "You has set -x but it doesn't looks like a number";
+    }
+
+    # check -u is a valid string representing an URI
+    if ( $opts{'X'} && !App::Feedmailer::looks_like_uri( $opts{'X'} ) ) {
+        die "You has set -X but it doesn't looks like an URI";
+    }
+
+    # check -X is a valid string representing an URI
+    if ( $opts{'u'} && !App::Feedmailer::looks_like_uri( $opts{'u'} ) ) {
+        die "You has set -u but it doesn't looks like an URI";
+    }
+
+    # implementation of the option -X, -u and -U
+    if ( $opts{'U'} || $opts{'u'} || $opts{'X'} ) {
+        if ( $opts{'x'} ) {
+            warn "You has set -x but it will ignored";
+            $opts{'x'} = undef;
+        }
+    }
+
+    # from
+    if ( $opts{f} ) {
+        $App::Feedmailer::cfg->{_}{from} = $opts{f};
+    }
+
+    # to
+    if ( $opts{t} ) {
+        $App::Feedmailer::cfg->{_}{to} //= $opts{t};
+    }
+
+    # whitelist
+    if ( $opts{w} ) {
+        $App::Feedmailer::WHITELIST_FILE = $opts{w};
+    }
+    else {
+        $App::Feedmailer::WHITELIST_FILE
+            = App::Feedmailer::get_file( $App::Feedmailer::WHITELIST_FILE,
+            @App::Feedmailer::dirs );
+    }
+    App::Feedmailer::file2list(
+        \@App::Feedmailer::whitelist,
+        $App::Feedmailer::WHITELIST_FILE,
+        { mode => Fcntl::O_RDONLY }
+    );
+
+    # blacklist
+    if ( $opts{b} ) {
+        $App::Feedmailer::BLACKLIST_FILE = $opts{b};
+    }
+    else {
+        $App::Feedmailer::BLACKLIST_FILE
+            = App::Feedmailer::get_file( $App::Feedmailer::BLACKLIST_FILE,
+            @App::Feedmailer::dirs );
+    }
+    App::Feedmailer::file2list(
+        \@App::Feedmailer::blacklist,
+        $App::Feedmailer::BLACKLIST_FILE,
+        { mode => Fcntl::O_RDONLY }
+    );
+
+    $App::Feedmailer::ua->show_progress( $opts{v} );
+
+    MIME::Lite->quiet( $opts{v} );
+    MIME::Lite->send(
+        'sendmail',
+        $opts{S} || "/usr/lib/sendmail -t -oi -oem",
+        Debug => $opts{v}
+    );
+
+    my @config_files;
+    push @config_files,
+        App::Feedmailer::get_file($App::Feedmailer::CONFIGFILE);
+    push @config_files,
+        App::Feedmailer::list_config_d(
+        App::Feedmailer::get_file($App::Feedmailer::CONFIG_D) );
+
+    $App::Feedmailer::cache = App::Feedmailer::load_cache();
+
+    for my $config_file (@config_files) {
+
+        $App::Feedmailer::cfg = App::Feedmailer::load_config($config_file);
+
+        for my $key ( $opts{'X'}
+            || $opts{'u'}
+            || List::Util::uniq( keys %{$App::Feedmailer::cfg} ) )
+        {
+            next if ( $key eq "_" );
+
+            threads->create( { "context" => "list" },
+                \&thread_handler_start, $key );
+            App::Feedmailer::loop_threads(
+                \&thread_handler_stop,
+                {   max_threads => $App::Feedmailer::cfg->{"_"}{"max_threads"}
+                }
+            );
+
+        }
+        App::Feedmailer::loop_last_threads( \&thread_handler_stop );
+    }
+    1;
+};
+

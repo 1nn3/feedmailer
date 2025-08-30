@@ -1,0 +1,92 @@
+#!/usr/bin/env perl
+
+use v5.12;
+use feature 'unicode_strings';
+use feature 'say';
+
+use Getopt::Std;
+use URI;
+use App::Feedmailer;
+
+#use locale;
+use utf8;
+binmode( STDERR, ":encoding(UTF-8)" );
+binmode( STDIN,  ":encoding(UTF-8)" );
+binmode( STDOUT, ":encoding(UTF-8)" );
+
+our $count_of_feeds = 0;
+our %opts;
+our $strftime = '%Y-%m-%d %T';
+our @double;
+my $VERSION = $App::Feedmailer::VERSION;
+
+getopts( "svdp:", \%opts )
+    || die $!;
+
+$App::Feedmailer::ua->show_progress( $opts{v} );
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+
+sub VERSION_MESSAGE {
+    my ($fh) = @_;
+    say $fh "listfeeds (%s)", $App::Feedmailer::PACKAGE_STRING;
+}
+
+sub HELP_MESSAGE {
+    my ($fh) = @_;
+    say $fh "No help message available yet.";
+}
+
+sub handler_start {
+    my ($uri) = @_;
+    my @feed_uris = App::Feedmailer::find_feeds( $uri,
+        { force_secure_scheme => $opts{s} } );
+    if ( $opts{v} ) {
+        my $length = scalar(@feed_uris);
+        warn "Found $length: $uri";
+    }
+    return @feed_uris;
+}
+
+sub handler_stop {
+    for (@_) {
+        if ( App::Feedmailer::is_double( $_, \@double ) ) {
+            next;
+        }
+        $_ = URI->new($_) || next;
+        $count_of_feeds++;
+        if ( $opts{d} ) {
+            my $feed = App::Feedmailer::get_feed(
+                $_,
+                {   ua                  => $App::Feedmailer::ua,
+                    proxy               => $opts{p},
+                    force_secure_scheme => $opts{s},
+                }
+            );
+            $feed || next;
+            say sprintf( "%s\t%s\t%d\t%s",
+                $_, $feed->format, scalar( $feed->entries ),
+                $feed->language );
+        }
+        else {
+            say $_;
+        }
+    }
+}
+
+for ( (@ARGV) ? @ARGV : <STDIN> ) {
+    my $uri = URI->new($_);
+    if ( !$uri ) {
+        warn $_, ": Not an URI";
+        next;
+    }
+    threads->create( { "context" => "list" }, \&handler_start, $uri );
+    App::Feedmailer::loop_threads( \&handler_stop );
+}
+App::Feedmailer::loop_last_threads( \&handler_stop );
+
+if ( $opts{v} ) {
+    say STDERR "Found $count_of_feeds total";
+}
+
+exit( !$count_of_feeds );
+

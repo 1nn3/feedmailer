@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+#set -x
+#set -e
+
+export LANG="C"
+export PATH
+
+abos="$(perl -e 'use App::Feedmailer; print App::Feedmailer::get_file("abos", @App::Feedmailer::dirs);')"
+test -d $abos && for i in $abos/*; do
+	sed "s/[#;].*//; /^\s*$/d" "$i"/* | sort -u
+done
+
+exit 0

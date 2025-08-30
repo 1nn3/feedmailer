@@ -1,0 +1,160 @@
+#!/usr/bin/env perl
+# Feedmailer
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>
+#
+# See http://github.com/user/feedmailer
+
+#use v5.12;
+use feature 'unicode_strings';
+use feature 'say';
+
+use App::Feedmailer;
+
+#use locale;
+use utf8;
+binmode( STDERR, ":encoding(UTF-8)" );
+binmode( STDIN,  ":encoding(UTF-8)" );
+binmode( STDOUT, ":encoding(UTF-8)" );
+
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+
+my $VERSION = $App::Feedmailer::VERSION;
+
+sub VERSION_MESSAGE {
+    my ($fh) = @_;
+    say $fh "mergefeeds (%s)", $App::Feedmailer::PACKAGE_STRING;
+}
+
+sub HELP_MESSAGE {
+    my ($fh) = @_;
+    say $fh "No help message available yet.";
+}
+
+our $count_of_entrys : shared;
+our @double : shared;
+our %opts;
+
+getopts( "i:1:a:CF:f:l:st:", \%opts )
+    || die $!;
+
+$opts{1} //= '%l';
+$opts{a} //= 'user <user@example.net>';
+$opts{l} //= "http://www.example.net";
+$opts{t} //= "NEWS - all you can read";
+
+#$opts{f} //= $App::Feedmailer::WHITELIST_FILE;
+#$opts{F} //= $App::Feedmailer::BLACKLIST_FILE;
+
+my @whitelist;
+if ( $opts{f} ) {
+    App::Feedmailer::file2list( \@whitelist, $opts{f},
+        { mode => Fcntl::O_RDONLY } );
+}
+my @blacklist;
+if ( $opts{F} ) {
+    App::Feedmailer::file2list( \@blacklist, $opts{F},
+        { mode => Fcntl::O_RDONLY } );
+}
+
+my @feed_args = ();
+my $feed      = XML::Feed->new(@feed_args) or die XML::Feed->errstr;
+$feed->author( Email::Address->parse( $opts{a} ) );
+$feed->id( $feed->link() );
+$feed->link( $feed->link() );
+$feed->modified( DateTime->now );
+$feed->self_link( $opts{l} );
+$feed->title( $opts{t} );
+
+sub _get_new_entrie {
+    my ($entrie) = @_;
+    my $link = $entrie->link;
+    if ( $opts{C} ) {
+        $canonical_link = App::Feedmailer::get_canonical($link);
+        if ($canonical_link) {
+            $link = $canonical_link;
+        }
+    }
+    return {
+        content  => $entrie->content,
+        link     => $link,
+        modified => App::Feedmailer::get_entry_date( $entrie, $feed ),
+        author   => App::Feedmailer::get_entry_author( $entrie, $feed ),
+        replace  => {
+            '%' => '%',
+            'e' => $entrie->title,
+            'l' => $entrie->link,
+        },
+        summary => $entrie->summary,
+        title   => $entrie->title,
+    };
+}
+
+sub handler_start {
+    my ($uri) = @_;
+    my @entrie_list;
+
+    for ( App::Feedmailer::find_feeds( $uri, $opts{s} ) ) {
+
+        my ($feed) = App::Feedmailer::get_feed( $_, undef, $opts{s} );
+
+        for ( $feed->entries ) {
+            eval { push( @entrie_list, _get_new_entrie($_) ); };
+            $@ && warn "$_: $@";
+        }
+    }
+    return ( \@entrie_list );
+}
+
+sub handler_stop {
+    my ($entrie_list) = @_;
+    for ( @{$entrie_list} ) {
+
+        App::Feedmailer::ig( $_->{title}, \@whitelist, \@blacklist ) && next;
+
+        ( my $id = $opts{1} ) =~ s/\%(\%|\w+)/$_->{replace}{$1}/ge;
+
+        App::Feedmailer::is_double( $id, \@double ) && next;
+
+        my $a = XML::Feed::Entry->new();
+        $a->author( $_->{author} );
+        $a->content( $_->{content} );
+        $a->id( $_->{link} );
+        $a->issued( $_->{modified} );
+        $a->link( $_->{link} );
+        $a->modified( $_->{modified} );
+        $a->summary( $_->{summary} );
+        $a->title( $_->{title} );
+
+        $feed->add_entry($a);
+    }
+}
+
+for ( (@ARGV) ? @ARGV : <STDIN> ) {
+    my $uri = URI->new($_);
+    if ( !$uri ) {
+        warn $_, ": Not an URI";
+        next;
+    }
+    threads->create( { "context" => "list" }, \&handler_start, $uri );
+    App::Feedmailer::loop_threads( \&handler_stop );
+}
+App::Feedmailer::loop_last_threads( \&handler_stop );
+
+print App::Feedmailer::to_utf8( $feed->as_xml );
+
+my $count_of_entrys = scalar( $feed->entries );
+warn "Feed includes $count_of_entrys articles.\n";
+exit( !$count_of_entrys );
+

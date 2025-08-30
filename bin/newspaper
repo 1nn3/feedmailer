@@ -1,0 +1,195 @@
+#!/usr/bin/env perl
+# @daily reporter | newspaper
+# bereite zur Zeitung auf
+
+use v5.12;
+
+use Data::Dumper;
+use Email::Address;
+use Getopt::Std;
+use App::Feedmailer;
+use Text::Wrap;
+use DateTime;
+use List::Util;
+
+#use locale;
+use utf8;
+binmode( STDIN,  ":encoding(UTF-8)" );
+binmode( STDOUT, ":encoding(UTF-8)" );
+binmode( STDERR, ":encoding(UTF-8)" );
+
+our @entries;
+our $count_of_entrys = 0;
+our %opts;
+our %headlines;
+getopts( "ab:Csx:zf:Fi:vw:", \%opts )
+    || die $!;
+$opts{x} //= "newspaper.tt.txt";
+
+$App::Feedmailer::ua->show_progress( $opts{v} );
+$App::Feedmailer::ua->agent(
+    'Mozilla/5.0 (Windows NT 10.0; rv:109.0) Gecko/20100101 Firefox/115.0');
+$App::Feedmailer::ua->from(undef);
+
+@App::Feedmailer::whitelist = (".*");    #: shared;
+if ( !$opts{F} ) {
+    if ( $opts{w} ) {
+        $App::Feedmailer::WHITELIST_FILE = $opts{w};
+    }
+    App::Feedmailer::file2list(
+        \@App::Feedmailer::whitelist,
+        $App::Feedmailer::WHITELIST_FILE,
+        { mode => Fcntl::O_RDONLY }
+    );
+}
+
+if ( $opts{b} ) {
+    $App::Feedmailer::BLACKLIST_FILE = $opts{b};
+}
+App::Feedmailer::file2list(
+    \@App::Feedmailer::blacklist,
+    $App::Feedmailer::BLACKLIST_FILE,
+    { mode => Fcntl::O_RDONLY }
+);
+
+my $parser = DateTime::Format::Strptime->new(
+    pattern  => '%Y-%m-%d-%H-%M-%S',
+    on_error => sub { warn Dumper $@, return DateTime->now; }
+    ,    # 'undef', # 'croak',
+);
+
+sub handler_start {
+    my ($uri) = @_;
+
+    $uri = URI->new($uri)
+        || return;
+
+    my $response
+        = App::Feedmailer::download( $uri,
+        { force_secure_scheme => $opts{s} } )
+        || return;
+
+    if ( !$opts{C} ) {
+        my $canonical_uri = App::Feedmailer::get_canonical( $uri, $response );
+        if ($canonical_uri) {
+            $uri = $canonical_uri;
+        }
+    }
+
+    my $p = HTML::HeadParser->new();
+    $p->parse( $response->decoded_content() );
+
+    my $author = $p->header('X-Meta-Author');
+    $author = join ", ", Email::Address->parse($author);
+
+    my $dt   = $p->header('X-Meta-Date') || DateTime->now();
+    my $date = $parser->parse_datetime($dt);
+
+    my $host = $uri->host();
+
+    my $link = $uri->as_string();
+
+    my $summary
+        = App::Feedmailer::clean_up( $p->header('X-Meta-Description') || "" );
+    my $summary_wrap = Text::Wrap::wrap( "", "", $summary );
+
+    my $title      = App::Feedmailer::clean_up( $p->header('Title') || "" );
+    my $title_wrap = Text::Wrap::wrap( "", "", $title );
+
+    return {
+        'replace' => {
+            '%' => '%',
+            'e' => $title,
+            'l' => $link,
+        },
+        'author'       => $author,
+        'date'         => $date,
+        'host'         => $host,
+        'link'         => $link,
+        'summary'      => $summary,
+        'summary_wrap' => $summary_wrap,
+        'title'        => $title,
+        'title_wrap'   => $title_wrap,
+    };
+}
+
+sub handler_stop {
+    push( @entries, @_ );
+}
+
+sub get_matchlist {
+    my ($string) = @_;
+    my @matchlist;
+    for (@App::Feedmailer::whitelist) {
+        my ( $ig, $re, $list ) = App::Feedmailer::ig(
+            $string,
+            {   whitelist => \@App::Feedmailer::whitelist,
+                blacklist => \@App::Feedmailer::blacklist
+            }
+        );
+        if ( $string =~ m/$_/i && !$ig ) {
+            push @matchlist, $_;
+            last if ( !$opts{a} );   # News nur in die erste Headline einfügen
+        }
+    }
+    return @matchlist;
+}
+
+for ( (@ARGV) ? @ARGV : <STDIN> ) {
+    my $uri = URI->new($_);
+    if ( !$uri ) {
+        warn $_, ": Not an URI";
+        next;
+    }
+    threads->create( { "context" => "list" }, \&handler_start, $uri );
+    App::Feedmailer::loop_threads( \&handler_stop );
+}
+App::Feedmailer::loop_last_threads( \&handler_stop );
+
+for (@entries) {
+    for my $match ( get_matchlist( $_->{title} ) ) {
+        $headlines{$match}{count}++;
+        push @{ $headlines{$match}{entries} }, $_;
+    }
+}
+
+for (@App::Feedmailer::whitelist) {
+
+    if ( !$opts{z} && $headlines{$_}{count} == 0 ) {
+
+        # kein News für die Headline
+        next;
+    }
+
+    if ( !$opts{N} ) {
+        say "";
+        say uc "$headlines{$_}{count}	$_";
+        say "";
+    }
+
+    my $template = $opts{x};
+    next if ( !$template );
+
+    for ( @{ $headlines{$_}{entries} } ) {
+        $count_of_entrys++;
+
+        my $tt_data = "";
+        my $tt_vars = {
+            'author'       => $_->{'author'},
+            'date'         => $_->{'date'},
+            'host'         => $_->{'host'},
+            'link'         => $_->{'link'},
+            'summary'      => $_->{'summary'},
+            'summary_wrap' => $_->{'summary_wrap'},
+            'title'        => $_->{'title'},
+            'title_wrap'   => $_->{'title_wrap'},
+        };
+
+        $App::Feedmailer::tt->process( $template, $tt_vars, \$tt_data )
+            || return $App::Feedmailer::tt->error;
+        say $tt_data;
+    }
+}
+
+exit( !$count_of_entrys );
+
