@@ -1,0 +1,31 @@
+#!/usr/bin/env -S flock -n ${HOME}/the-lone-gunman/abos2config chronic sh
+# make config files for feedmailer(1p)
+# @monthly abos2config
+
+#set -x
+set -e
+
+# working directory
+wd="$(perl -e 'use App::Feedmailer; print App::Feedmailer::get_file(".", @App::Feedmailer::dirs);')"
+cd "$wd" || exit
+
+abos="abos" # "$(perl -e 'use App::Feedmailer; print App::Feedmailer::get_file("abos", @App::Feedmailer::dirs);')"
+
+_abos2config () {
+	sed "s/[#;].*//; /^\s*$/d" | sort -u \
+		| xargs -P 8 -I {} sh -c "listfeeds -s -d {} \
+		| justonefeedformat" \
+		| sed 's/^/[/; s/$/]/'
+}
+
+rm -rf "config.d"
+mkdir "config.d"
+
+test -d "$abos" && for i in "$abos"/*; do
+	config=config.d/$(basename $i).ini
+	cat $i/global.ini >$config || >$config
+	cat $i/*.txt | _abos2config >>$config
+done
+
+exit 0
+

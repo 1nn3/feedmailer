@@ -1,0 +1,23 @@
+#!/usr/bin/env -S chronic flock -n ${HOME}/.newspaper-cronjob.lock sh
+# Schicke Reporter los die Nachrichten holen und breite zur Zeitung auf
+# @daily newspaper-cronjob
+
+#set -x
+set -e
+
+trap 'rm -f -- "${HOME}/.newspaper-cronjob.lock"' 0 1 2 3 15
+
+# working directory
+wd="$(perl -e 'use App::Feedmailer; print App::Feedmailer::get_file(".", @App::Feedmailer::dirs);')"
+cd "$wd" || exit
+
+touch config.ini # time of the last run
+
+export APP_FEEDMAILER_HOOK="/usr/bin/perl -E 'print (\"%l\\n\")'"
+export USER=${USER:-$LOGNAME}
+feedmailer-cronjob "$@" \
+	| unsortuniq | newspaper -s -N -F \
+	| mail -E -s "🗞️ Newspaper" $USER \
+
+exit 0
+

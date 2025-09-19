@@ -1,0 +1,81 @@
+#!/usr/bin/env perl
+
+#use v5.12;
+use feature 'unicode_strings';
+use feature 'say';
+
+use App::Feedmailer;
+use Getopt::Std;
+
+#use locale;
+use utf8;
+binmode( STDERR, ":encoding(UTF-8)" );
+binmode( STDIN,  ":encoding(UTF-8)" );
+binmode( STDOUT, ":encoding(UTF-8)" );
+
+our %opts;
+our $strftime = '%Y-%m-%d %T';
+our @double;
+our $count_of_entries = 0;
+
+getopts( "i:stvp:", \%opts )
+    || die $!;
+
+$App::Feedmailer::ua->show_progress( $opts{v} );
+
+sub handler_start {
+    my ($uri) = @_;
+
+    my $feed = App::Feedmailer::get_feed(
+        $uri,
+        {   ua                  => $App::Feedmailer::ua,
+            proxy               => $opts{p},
+            force_secure_scheme => $opts{s},
+        }
+    );
+    $feed || return;
+
+    if ( $opts{t} ) {
+        return map {
+            my $link  = App::Feedmailer::get_abs_uri( $feed->link, $_->link );
+            my $date  = App::Feedmailer::get_entry_date( $_, $feed );
+            my $title = App::Feedmailer::clean_up( $_->title );
+            my $author = App::Feedmailer::get_entry_author( $_, $feed );
+            sprintf "%s\t%s\t%s\t%s",
+                $date->strftime($strftime),
+                $title,
+                $link->as_string,
+                $author;
+        } $feed->entries;
+    }
+
+    return map {
+        App::Feedmailer::get_abs_uri( $feed->link, $_->link )->as_string;
+    } $feed->entries;
+}
+
+sub handler_stop {
+    for (@_) {
+        if ( App::Feedmailer::is_double( $_, \@double ) ) {
+            next;
+        }
+        say $_;
+        $count_of_entries++;
+    }
+}
+
+for ( (@ARGV) ? @ARGV : <STDIN> ) {
+    my $uri = URI->new($_);
+    if ( !$uri ) {
+        warn $_, ": Not an URI";
+        next;
+    }
+    threads->create( { "context" => "list" }, \&handler_start, $uri );
+    App::Feedmailer::loop_threads( \&handler_stop );
+}
+App::Feedmailer::loop_last_threads( \&handler_stop );
+if ( $opts{v} ) {
+    say STDERR "Found $count_of_entries entries.";
+}
+exit( !$count_of_entries );
+

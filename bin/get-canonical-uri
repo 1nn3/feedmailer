@@ -1,0 +1,47 @@
+#!/usr/bin/env perl
+
+#use v5.12;
+use feature 'unicode_strings';
+use feature 'say';
+
+use Getopt::Std;
+use LWP::UserAgent;
+use URI::Fetch;
+use XML::LibXML;
+use POSIX;
+use HTTP::Response;
+use App::Feedmailer;
+
+#use locale;
+use utf8;
+binmode( STDERR, ":encoding(UTF-8)" );
+binmode( STDIN,  ":encoding(UTF-8)" );
+binmode( STDOUT, ":encoding(UTF-8)" );
+
+our %opts;
+getopts( "i:v", \%opts )
+    || die $!;
+
+$App::Feedmailer::ua->show_progress( $opts{v} );
+
+sub start_handler {
+    my ($uri) = @_;
+    return App::Feedmailer::get_canonical($uri);
+}
+
+sub stop_handler {
+    my ($uri) = @_;
+    say $uri;
+}
+
+for ( (@ARGV) ? @ARGV : <STDIN> ) {
+    my $uri = URI->new($_);
+    if ( !$uri ) {
+        warn $_, ": Not an URI";
+        next;
+    }
+    threads->create( { "context" => "list" }, \&start_handler, $uri );
+    App::Feedmailer::loop_threads( \&stop_handler );
+}
+App::Feedmailer::loop_last_threads( \&stop_handler );
+

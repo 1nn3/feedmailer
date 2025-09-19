@@ -1,0 +1,4 @@
+#!/usr/bin/awk -f
+# unsortuniq
+!lines[$0]++
+
