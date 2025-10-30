@@ -1,0 +1,65 @@
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+genfeed - Generiert einen neuen Feed
+
+=head1 SYNOPSIS
+
+B<genfeed> [options…] <entry-uri…> >feed.xml
+
+=head1 DESCRIPTION
+
+Generiert einen neuen feed aus den angegebenen websites.
+
+=head1 OPTIONS
+
+=over
+
+=item --version
+
+=item --help
+
+=item -a <string>
+
+Feed author.
+
+=item -l <URI>
+
+Feed link.
+
+=item -t <string>
+
+Feed title.
+
+=item -f <path/to/whitelist>
+
+Filter: Datei mit Pattern, auf die ein Artikel passen muss.
+
+=item -F <path/to/blacklist>
+
+Filter: Datei mit Pattern, auf die ein Artikel nicht passen darf.
+
+=item -i FILE
+
+URIs werden zeilenweise aus I<FILE> gelesen.
+
+Not implemented yet.
+
+=back
+
+=head1 RETURN VALUE
+
+Wenn der Feed KEINE Artikel enthält B<1> (failure).
+
+Wenn der Feed Artikel enthält B<0> (success).
+
+=head1 SEE ALSO
+
+L<mergefeeds(1p)>
+
+=cut
+

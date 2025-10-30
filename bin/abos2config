@@ -1,0 +1,41 @@
+#!/usr/bin/env -S chronic flock -n ${HOME}/.abos2config.lock sh
+# @weekly abos2config
+
+#set -x
+#set -e
+
+_listabos () {
+	for i; do
+		sed 's/[#;].*//; /^\s*$/d' "$i"
+	done | unsortuniq
+}
+
+_abos2config () {
+	sed "s/[#;].*//; /^\s*$/d" | sort -u \
+		| listfeeds -s -d \
+		| justonefeedformat \
+		| sed 's/^/[/; s/$/]/'
+}
+
+trap 'rm -f -- "${HOME}/.abos2config.lock"' 0 1 2 3 15
+eval "$(perl -I$HOME/.local/lib/perl5 -Mlocal::lib=$HOME/.local)"
+
+# working directory
+wd="$(perl -e 'use App::Feedmailer; print App::Feedmailer::get_file(".", @App::Feedmailer::dirs);')"
+cd "$wd" || exit
+
+rm -rf -- config.d
+mkdir config.d # time of the last run
+
+abos="$(perl -e 'use App::Feedmailer; print App::Feedmailer::get_file("abos", @App::Feedmailer::dirs);')"
+find "$abos" -iname \*.txt | while read REPLY; do
+	dn=$(dirname "$REPLY")
+	bn=$(basename "$REPLY" .txt)
+	config="config.d/$dn/$bn.ini"
+	mkdir -p $(dirname "$config")
+	cat "$dn/feedmailer.ini" >>"$config" || true
+	_listabos "$REPLY" | _abos2config >>"$config"
+done
+
+exit 0
+

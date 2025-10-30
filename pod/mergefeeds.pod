@@ -1,0 +1,84 @@
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+mergefeeds - Erzeut aus mehreren Newsfeeds einen neuen
+
+=head1 SYNOPSIS
+
+B<mergefeeds> <options> -- <URI…> >new-feed.xml
+
+B<listfeeds> <URI…> | B<mergefeeds> <options> >new-feed.xml
+
+=head1 DESCRIPTION
+
+Erzeut aus mehreren Newsfeeds einen neuen.
+
+=head1 OPTIONS
+
+=over
+
+=item --version
+
+=item --help
+
+=item -a <string>
+
+Feed author.
+
+=item -l <URI>
+
+Feed link.
+
+=item -t <string>
+
+Feed title.
+
+=item -C
+
+Use canonical link.
+
+=item -i FILE
+
+URIs werden zeilenweise aus I<FILE> gelesen.
+
+Not implemented yet.
+
+=item -f <path/to/whitelist>
+
+Filter: Datei mit RE Pattern, auf die ein Artikel passen muss.
+
+Standardwert: ./whitelist.txt
+
+=item -F <path/to/blacklist>
+
+Filter: Datei mit RE Pattern, auf die ein Artikel nicht passen darf.
+
+Standardwert: ./blacklist.txt
+
+=back
+
+=head1 RETURN VALUE
+
+Wenn der Feed KEINE Artikel enthält I<1> (failure).
+
+Wenn der Feed Artikel enthält I<0> (success).
+
+=head1 FILES
+
+=over
+
+=item .
+
+Das Aktuelle Arbeitsverzeichnis.
+
+=item ./whitelist.txt
+
+=item ./blacklist.txt
+
+=back
+
+=cut
+

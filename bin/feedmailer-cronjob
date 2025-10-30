@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+# @daily reporter
+# Schicke Reporter los die Nachrichten holen
+
+use App::Feedmailer;
+use Cwd;
+use Env qw($USER $LOGNAME $EMAIL);
+
+$EMAIL //= $USER;
+$EMAIL //= $LOGNAME;
+
+our %opts;
+getopts( "c:", \%opts )
+    || die "Error on processing of command-line-options";
+
+if ( $opts{'c'} ) {
+    if ( !Cwd::chdir $opts{'c'} ) {
+        die $opts{c}, ": ", $!;
+    }
+    push @ARGV, '-c', $opts{c};
+    $App::Feedmailer::CONFIG_DIR = $opts{c};
+    $App::Feedmailer::dirs[0] = $App::Feedmailer::CONFIG_DIR;
+}
+
+my @args;
+
+@args = ('feedmailer-clean', @ARGV);
+system(@args) == 0
+    or die "system @args failed: $?";
+
+@args = ( 'feedmailer', '-n', '-x', '32', '-1', '%e', '-F', @ARGV );
+system(@args) == 0
+    or die "system @args failed: $?";
+

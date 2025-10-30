@@ -1,0 +1,38 @@
+#!/usr/bin/env perl
+
+#use v5.12;
+use feature 'unicode_strings';
+use feature 'say';
+
+use Getopt::Std;
+use MIME::Lite::HTML;
+
+#use locale;
+use utf8;
+binmode( STDERR, ":encoding(UTF-8)" );
+binmode( STDIN,  ":encoding(UTF-8)" );
+binmode( STDOUT, ":encoding(UTF-8)" );
+
+our %opts;
+
+getopts( "t:f:s:u:p:v", \%opts )
+    || die $!;
+
+my $uri = URI->new( $opts{u} )
+    || die "No URI given";
+
+my $mailHTML = new MIME::Lite::HTML
+    Subject        => $opts{s} || $uri->as_string,
+    To             => $opts{t} || $ENV{EMAIL} || $ENV{USER},
+    From           => $opts{f} || $ENV{EMAIL} || $ENV{USER},
+    Proxy          => $opts{p},
+    remove_jscript => 1,
+    Debug          => $opts{v},
+    TextEncoding   => 'base64',
+    HTMLEncoding   => 'base64',
+    Url            => $uri->as_string;
+
+my $MIMEmail = $mailHTML->parse( $uri->as_string );
+$MIMEmail->send;
+exit !$MIMEmail->last_send_successful();    # opposite as exit code
+

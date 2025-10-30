@@ -1,0 +1,67 @@
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+send-uri - send URI as e-mail
+
+=head1 SYNOPSIS
+
+B<send-uri> [OPTION]...
+
+=head1 DESCRIPTION
+
+Sends a website as e-mail.
+
+=head1 OPTIONS
+
+=over
+
+=item --version
+
+=item --help
+
+=item -u <URI/URL of webpage>
+
+URI of website to send as e-mail.
+
+=item -s <subject>
+
+Subject of the e-mail.
+
+The default value is the URI as string.
+
+=item -t <to>
+
+To: Recipients.
+
+The default for I<-t> is in that order: Environment variables
+I<EMAIL> or as fallback I<USER>.
+
+=item -f <from>
+
+From: Envelope Sender.
+
+The default for I<-f> is same as for the option I<-t>.
+
+=item -v
+
+Verbose: Print more information about progress.
+
+=item -S <alt. sendmail command>
+
+Sendmail: Alt. sendmail command. E.g:
+ ssh [user@]hostname -c sendmail
+
+See also: L<sendmail(8)>
+
+=back
+
+=head1 SEE ALSO
+
+L<feedmailer(8)>
+
+=cut
+

@@ -1,0 +1,4 @@
+	/{usr/,}bin/sh lrix,
+	/{usr/,}bin/{bash,rbash} lrix,
+	/{usr/,}bin/dash lrix,
+

@@ -1,0 +1,12 @@
+\*\*\* BILDplus Inhalt \*\*\*
+Fussball|DFB|UEFA|Champions League|(^|\W)CL-Finale|Europacup
+Handball
+Wasserball
+Football
+Basktball
+Sport|Olympia|(^|\W)(E|W)M(\W|$)
+Corona|COVID-19|COVID19|SARS-CoV-2|SARSCoV2
+Wette|Glücksspiel|Lotto|Eurojackpot
+Post von Wagner
+ - Treuchtlingen, Weißenburg, Gunzenhausen, Polsingen, Polsingen, Polsingen, Hilpoltstein, Westheim, Westheim, Schwabach | Nordbayern$
+^(S+) 
