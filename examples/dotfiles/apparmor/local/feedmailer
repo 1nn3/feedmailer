@@ -1,0 +1,4 @@
+# all valid (login) shells; see /etc/shells
+/{usr/,}bin/sh lrix,
+/{usr/,}bin/{bash,rbash,bash-static} lrix,
+/{usr/,}bin/dash lrix,

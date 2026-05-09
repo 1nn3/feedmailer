@@ -1,0 +1,52 @@
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+feedmailer-cronjob - schicke Reporter los die Nachrichten holen
+
+=head1 SYNOPSIS
+
+B<feedmailer-cronjob> [-c path/to/directory]
+
+Cronjob:
+
+	@daily nm-online -qx && feedmailer-cronjob
+
+=head1 OPTIONS
+
+=head2 General options
+
+=over
+
+=item --version
+
+=item --help
+
+=item -c <path/to/directory>
+
+An alternate configuration directroy.
+
+=item --
+
+Alle Optionen nach I<--> werden direkt an B<feedmailer> durchgereicht.
+
+=back
+
+=head1 EXAMPLE
+
+Configure a hook:
+
+	hook = /usr/bin/perl -E 'print ("%l\n")'
+
+Or export APP_FEEDMAILER_HOOK:
+
+	APP_FEEDMAILER_HOOK="/usr/bin/perl -E 'print (\"%l\\n\")'" feedmailer-cronjob
+
+=head1 SEE ALSO
+
+L<feedmailer(1p)>, L<feedmailer-clean(1p)>
+
+=cut

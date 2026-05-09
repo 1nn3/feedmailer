@@ -1,0 +1,4 @@
+# TODO
+
+- Use `$feed->splice($other_feed)` in *mergefeed(1p)*?
+

@@ -1,0 +1,18 @@
+#!/usr/bin/env -S chronic is-online flock -n ${HOME}/bin/newspaper-cronjob nice sh
+# Schicke Reporter los die Nachrichten holen (und breite zur Zeitung auf)
+# @daily ~/bin/newspaper-cronjob
+
+export PATH=$HOME/bin:/usr/local/bin:/usr/bin:/bin
+export USER=${USER:-$LOGNAME}
+
+# working directory
+wd="$(perl -e 'use App::Feedmailer; print App::Feedmailer::get_file(".", @App::Feedmailer::dirs);')"
+cd "$wd" || exit
+
+export APP_FEEDMAILER_HOOK="/usr/bin/perl -E 'print (\"%l\\n\")'"
+feedmailer-cronjob "$@" \
+	| unsortuniq | newspaper -s -N -F \
+	| mail -E -s "🗞️ The lone gunman…" $USER
+
+exit 0
+

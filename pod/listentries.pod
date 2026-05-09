@@ -1,0 +1,41 @@
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+listentries - lists entries of a newsfeed
+
+=head1 SYNOPSIS
+
+B<listentries> [OPTION] <URI…>
+
+B<listfeeds> [OPTION] <URI…> | B<listentries> [OPTION]
+
+=head1 DESCRIPTION
+
+Lists entries of an URI.
+
+=head1 OPTIONS
+
+=over
+
+=item -t
+
+With text. Print text e.g. the date and the headline too.
+
+=item -i FILE
+
+URIs werden zeilenweise aus I<FILE> gelesen.
+
+Not implemented yet.
+
+=back
+
+=head1 SEE ALSO
+
+L<listfeeds(1p)>
+
+=cut
+
