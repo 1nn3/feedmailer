@@ -1,0 +1,11 @@
+[Unit]
+Description=The lone gunman
+
+[Timer]
+OnCalendar=*-*-* 00:00:00
+Persistent=true
+Unit=newspaper.service
+
+[Install]
+WantedBy=basic.target
+

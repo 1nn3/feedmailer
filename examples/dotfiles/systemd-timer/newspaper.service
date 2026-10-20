@@ -1,0 +1,9 @@
+[Unit]
+Description=The lone gunman
+
+[Service]
+ExecStart=/usr/bin/newspaper-cronjob
+
+[Install]
+WantedBy=basic.target
+

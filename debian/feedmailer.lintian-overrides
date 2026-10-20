@@ -1,0 +1,7 @@
+binary-without-manpage usr/bin/feedmailer-cronjob
+changelog-is-dh_make-template
+incorrect-path-for-interpreter usr/bin/feedmailer-clean (#!/usr/bin/env perl != /usr/bin/perl)
+incorrect-path-for-interpreter usr/bin/feedmailer (#!/usr/bin/env perl != /usr/bin/perl)
+incorrect-path-for-interpreter usr/bin/lsfeed (#!/usr/bin/env perl != /usr/bin/perl)
+incorrect-path-for-interpreter usr/bin/send-uri (#!/usr/bin/env perl != /usr/bin/perl)
+wrong-bug-number-in-closes l3:#nnnn
