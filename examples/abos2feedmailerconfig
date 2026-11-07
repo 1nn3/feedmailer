@@ -1,0 +1,29 @@
+#!/usr/bin/env -S chronic is-online flock -n ${HOME}/bin/abos2feedmailerconfig nice sh
+# @weekly abos2feedmailerconfig
+
+export PATH="$HOME/bin:/usr/local/bin:/usr/bin:/bin"
+export TMPDIR="/dev/shm"
+
+_ () {
+	listfeeds -s -d | justonefeedformat | sed 's/^/[/; s/$/]/'
+}
+
+# working directory
+wd="$(perl -e 'use App::Feedmailer; print App::Feedmailer::get_file(".", @App::Feedmailer::dirs);')"
+cd "$wd" || exit
+
+tmp=$(mktemp)
+trap 'rm -f -- $tmp' 0 1 2 3 15
+
+abos="$(perl -e 'use App::Feedmailer; print App::Feedmailer::get_file("config.d", @App::Feedmailer::dirs);')"
+find "$abos" -iname \*.txt | while read REPLY; do
+	#NOTE: we have already URIs in the feedmailer abo files!
+	#listabos $REPLY | domain2uri | _ >$tmp
+	listabos $REPLY | _ >$tmp
+	if [ -s $tmp ]; then
+		dn=$(dirname $REPLY)
+		bn=$(basename $REPLY .txt)
+		install -D --mode 644 $tmp $dn/$bn.ini
+	fi
+done
+

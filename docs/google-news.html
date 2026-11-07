@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>google-news</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+</style>
+</head>
+<body>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#google-news-als-rss--oder-atom-feed" id="toc-google-news-als-rss--oder-atom-feed">Google News als RSS- oder
+Atom-Feed</a>
+<ul>
+<li><a href="#feed-für-ein-thema" id="toc-feed-für-ein-thema">Feed für
+ein Thema</a></li>
+<li><a href="#feed-für-eine-suche" id="toc-feed-für-eine-suche">Feed für
+eine Suche</a>
+<ul>
+<li><a href="#nur-deutschsprachige-ergebnisse" id="toc-nur-deutschsprachige-ergebnisse">Nur deutschsprachige
+Ergebnisse</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="google-news-als-rss--oder-atom-feed">Google News als RSS- oder
+Atom-Feed</h1>
+<p>Google News lässt sich als RSS- oder Atom‑Feed nutzen, denn Google
+News unterstützt weiterhin RSS und Atom-Feeds – die URLs sind nur nicht
+verlinkt.</p>
+<h2 id="feed-für-ein-thema">Feed für ein Thema</h2>
+<p>Format:
+<code>https://news.google.com/rss/topics/&lt;TOPIC-ID&gt;</code></p>
+<p>Beispie für Google News - Welt – Aktuell:</p>
+<pre><code>https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtUmxHZ0pFUlNnQVAB</code></pre>
+<p>Bzw für den Atom-Feed:</p>
+<pre><code>https://news.google.com/atom/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtUmxHZ0pFUlNnQVAB</code></pre>
+<h2 id="feed-für-eine-suche">Feed für eine Suche</h2>
+<p>Format:<code>https://news.google.com/atom/search?q=&lt;SUCHBEGRIFF&gt;</code></p>
+<p>Beispiel:</p>
+<pre><code>https://news.google.com/atom/search?q=Eilmeldung</code></pre>
+<h3 id="nur-deutschsprachige-ergebnisse">Nur deutschsprachige
+Ergebnisse</h3>
+<p>Google News nutzt Parameter wie
+<code>hl=de&amp;gl=DE&amp;ceid=DE:de</code></p>
+<p>Beispiel:</p>
+<pre><code>https://news.google.com/atom/search?q=Eilmeldung&amp;hl=de&amp;gl=DE&amp;ceid=DE:de</code></pre>
+</body>
+</html>
